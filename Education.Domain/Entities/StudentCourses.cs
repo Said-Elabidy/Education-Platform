@@ -9,13 +9,18 @@ namespace Education.Domain.Entities
 {
 	public class StudentCourses
 	{
-		public string UserId { get; set; } = null!;
-		public int CoursesId { get; set; }	
-		public Courses Course { get; set; }
+		public string UserId { get; set; }
+		public int CoursesId { get; set; }
+        public int ProgressValue { get; set; }
+
+		public int Rating { get; set; }  //to know if student complete course
+        public Courses Course { get; set; }
 		public DateTime EnrollmentDate { get; set; }
 		public bool IsCompleted { get; set; }  //to know if student complete course
 		public DateTime? CompletedAt { get; set; }
 		public ApplicationUser ApplicationUser { get; set; }
+
+		
 		
 	}
 }

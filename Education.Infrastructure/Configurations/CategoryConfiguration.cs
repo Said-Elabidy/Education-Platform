@@ -15,8 +15,12 @@ namespace Education.Infrastructure.Configurations
         {
             builder.HasKey(c => c.CategorieId);
             builder.Property(c => c.CategorieId).ValueGeneratedOnAdd();
-            builder.Property(c => c.Name).IsRequired();
+            builder.Property(c => c.Name).IsRequired()
+                .HasMaxLength(200);
+                                                                                        
             builder.HasIndex(c => c.Name).IsUnique();
+
+            
         }
     }
 }

@@ -21,12 +21,19 @@ namespace Education.Domain.Entities
 		public bool IsSequentialWatch {  get; set; }	
 		public int CategoriesId { get; set; }
 		public bool IsFree { get; set; } //if all course free no need to buy ,any one can wathch them
-		public Categories Categories { get; set; }
-		public ICollection<Section> Sections { get; set; }	
-		public ICollection<Payment> payments { get; set; }	
 
+		public int Rating { get; set; } //will be calculated by all rating for this course
+        public Categories Categories { get; set; }
+        
+        public ICollection<Section>? Sections { get; set; }	
+		public ICollection<Payment>? payments { get; set; }
 		
- 	}
+		public ICollection<StudentCourses> StudentCourses { get; set; } 
+
+
+
+
+    }
 }
 
 //IsSequentialWatch  (true) student can watch any video without order 

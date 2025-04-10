@@ -13,8 +13,7 @@ namespace Education.Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<Payment> builder)
         {
-            builder.HasKey(p=>p.PaymentId);
-            builder.Property(p => p.PaymentId).ValueGeneratedOnAdd();
+            builder.HasKey(p => new { p.UserId, p.CourseId });
 
             builder.HasOne(p => p.ApplicationUser).WithMany(AU => AU.payments).HasForeignKey(p => p.UserId);
             builder.HasOne(p => p.Courses).WithMany(c => c.payments).HasForeignKey(p => p.CourseId);

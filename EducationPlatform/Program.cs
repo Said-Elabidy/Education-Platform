@@ -16,10 +16,10 @@ namespace EducationPlatform
 
             builder.Services.AddControllers();
             //Inject DataBase Connection string
-            builder.Services.AddDbContext<EducationPlatformDBContext>(optionBulder =>
-            {
-                optionBulder.UseSqlServer(builder.Configuration.GetConnectionString("cs"));
-            });
+            //builder.Services.AddDbContext<EducationPlatformDBContext>(optionBulder =>
+            //{
+            //    optionBulder.UseSqlServer(builder.Configuration.GetConnectionString("cs"));
+            //});
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
