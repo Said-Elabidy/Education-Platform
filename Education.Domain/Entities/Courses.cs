@@ -13,7 +13,7 @@ namespace Education.Domain.Entities
 		public string Title { get; set; }	
 		public string Description { get; set; }	
 		public decimal Price { get; set; }
-		public int DiscountPercentage { get; set; }
+		public int? DiscountPercentage { get; set; }
 		public CourseStatus CourseStatus { get; set; }
 		public string CourseImage {  get; set; }	
 		public int SectionNumber { get; set; }	
@@ -23,6 +23,7 @@ namespace Education.Domain.Entities
 		public bool IsFree { get; set; } //if all course free no need to buy ,any one can wathch them
 		public Categories Categories { get; set; }
 		public ICollection<Section> Sections { get; set; }	
+		public ICollection<Payment> payments { get; set; }	
 
 		
  	}

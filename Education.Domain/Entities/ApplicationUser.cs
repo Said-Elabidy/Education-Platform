@@ -15,6 +15,7 @@ namespace Education.Domain.Entities
 		public string? ProfileImage { get; set; }
 		public DateTime DateOfBirt { get; set; }
 		public ICollection<FeedBack> feedBacks { get; set; }
+		public ICollection<Payment>? payments { get; set; }
 
 	}
 }
