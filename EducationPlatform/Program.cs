@@ -1,6 +1,8 @@
 
 using Education.Application.Extentions;
+using Education.Infrastructure.Database;
 using Education.Infrastructure.Extentions;
+using Microsoft.EntityFrameworkCore;
 
 namespace EducationPlatform
 {
@@ -13,6 +15,12 @@ namespace EducationPlatform
             // Add services to the container.
 
             builder.Services.AddControllers();
+            //Inject DataBase Connection string
+            //builder.Services.AddDbContext<EducationPlatformDBContext>(optionBulder =>
+            //{
+            //    optionBulder.UseSqlServer(builder.Configuration.GetConnectionString("cs"));
+            //});
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

@@ -13,5 +13,6 @@ namespace Education.Domain.Entities
 		public string UserId { get; set; }	
 		public ApplicationUser applicationUser {  get; set; }
 		public bool IsWatched { get; set; }
+		
 	}
 }

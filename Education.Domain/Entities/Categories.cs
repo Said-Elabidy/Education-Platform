@@ -10,6 +10,6 @@ namespace Education.Domain.Entities
 	{
 		public int CategorieId { get; set; }	
 		public string Name { get; set; } 
-		public ICollection<Courses> courses { get; set; }	
+		public ICollection<Courses>? courses { get; set; }	
 	}
 }
