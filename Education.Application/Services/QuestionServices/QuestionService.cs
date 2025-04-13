@@ -1,7 +1,7 @@
 ﻿using Education.Domain.Entities;
 using Education.Domain.Repository;
 
-namespace Education.Application.QuestionServices
+namespace Education.Application.Services.QuestionServices
 {
     public class QuestionService(IQuestionRepository questionRepository) : IQuestionService
     {

@@ -13,7 +13,7 @@ namespace Education.Domain.Repository
     public class QuestionRepository : GenericRepository<Question>, IQuestionRepository
     {
 
-        public QuestionRepository(DbContext context) : base(context)
+        public QuestionRepository(EducationPlatformDBContext context) : base(context)
         {
 
         }

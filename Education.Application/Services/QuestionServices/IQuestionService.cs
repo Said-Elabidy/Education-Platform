@@ -1,6 +1,6 @@
 ﻿using Education.Domain.Entities;
 
-namespace Education.Application.QuestionServices
+namespace Education.Application.Services.QuestionServices
 {
     public interface IQuestionService
     {
