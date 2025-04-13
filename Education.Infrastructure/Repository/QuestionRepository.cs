@@ -1,4 +1,7 @@
 ﻿using Education.Domain.Entities;
+using Education.Infrastructure.Database;
+using Education.Infrastructure.Repository;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,36 +10,19 @@ using System.Threading.Tasks;
 
 namespace Education.Domain.Repository
 {
-    public class QuestionRepository : IQuestionRepository
+    public class QuestionRepository : GenericRepository<Question>, IQuestionRepository
     {
-        public Task<int> AddQuestionAsync(Question question)
+
+        public QuestionRepository(DbContext context) : base(context)
         {
-            throw new NotImplementedException();
+
         }
 
-        public Task<bool> DeleteQuestionAsync(int Id)
-        {
-            throw new NotImplementedException();
-        }
+       
 
-        public Task<IEnumerable<Question>> GetAllQuestionsAsync()
-        {
-            throw new NotImplementedException();
-        }
 
-        public Task<Question> GetQuestionByIdAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> SaveChangesAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> UpdateQuestion(Question question)
-        {
-            throw new NotImplementedException();
-        }
     }
+
+
+    
 }

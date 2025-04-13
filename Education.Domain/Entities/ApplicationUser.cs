@@ -17,6 +17,7 @@ namespace Education.Domain.Entities
 		public ICollection<FeedBack>? feedBacks { get; set; }
 		public ICollection<Payment>? payments { get; set; }
 		public ICollection<StudentCourses>? StudentCourses { get; set; }
+        public IEnumerable<UserQuiz> UserQuizzes { get; set; } = new List<UserQuiz>();
 
     }
 }

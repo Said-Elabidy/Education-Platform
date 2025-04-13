@@ -18,7 +18,6 @@ namespace Education.Domain.Entities
 
         public int QuizId { get; set; }
 
-
         public Quiz Quiz { get; set; } 
 
     }

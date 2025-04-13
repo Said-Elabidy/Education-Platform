@@ -1,10 +1,5 @@
 ﻿using Education.Domain.Repository;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Education.Infrastructure.Repository
 {
@@ -37,17 +32,25 @@ namespace Education.Infrastructure.Repository
 
             public void Update(T entity)
             {
-                _dbSet.Update(entity);
+            _dbSet.Update(entity);
+
             }
 
-            public void Delete(T entity)
+           public void Delete(T entity)
             {
-                _dbSet.Remove(entity);
+
+            _dbSet.Remove(entity);
+
             }
 
-            public async Task<bool> SaveChangesAsync()
+             public async Task<bool> SaveChangesAsync()
             {
                 return await _context.SaveChangesAsync() > 0;
             }
-        }
+
+            public void Delete(int Id)
+            {
+               _context.Remove(Id);
+            }
+    }
 }

@@ -8,7 +8,9 @@ namespace Education.Domain.Entities
 {
     public class UserQuiz
     {
-        public Guid UserId { get; set; }
+        public int Id { get; set; }
+
+        public string UserId { get; set; }
 
         public int QuizId { get; set; }
 
@@ -18,5 +20,7 @@ namespace Education.Domain.Entities
 
         
         public Quiz Quiz { get; set; } = null!;
+
+        public ApplicationUser ApplicationUser { get; set; } = null!;
     }
 }
