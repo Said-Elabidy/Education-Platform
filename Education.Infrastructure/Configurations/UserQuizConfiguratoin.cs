@@ -15,14 +15,17 @@ namespace Education.Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<UserQuiz> builder)
         {
-            builder.HasKey(uq => new { uq.UserId, uq.QuizId });
-
-           // Relation With User ?? 
+            builder.HasKey(pk => pk.Id );
 
              builder.HasOne(uq => uq.Quiz)
                 .WithMany(q => q.UserQuizzes)
                 .HasForeignKey(uq => uq.QuizId)
-                .OnDelete(DeleteBehavior.Cascade); // Or Restrict
+                .OnDelete(DeleteBehavior.Cascade); 
+
+             builder.HasOne(uq => uq.ApplicationUser)
+               .WithMany(q => q.UserQuizzes)
+               .HasForeignKey(uq => uq.UserId)
+               .OnDelete(DeleteBehavior.Cascade);
 
              builder.Property(uq => uq.Score)
                 .IsRequired()
@@ -31,7 +34,10 @@ namespace Education.Infrastructure.Configurations
              builder.Property(uq => uq.IsPassed)
                 .IsRequired()
                 .HasDefaultValue(false);
-           
+
+
+            
+
         }
     }
 }

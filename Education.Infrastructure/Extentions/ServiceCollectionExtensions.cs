@@ -1,4 +1,7 @@
-﻿using Education.Infrastructure.Database;
+﻿using Education.Domain.Entities;
+using Education.Domain.Repository;
+using Education.Infrastructure.Database;
+using Education.Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +18,10 @@ public static class ServiceCollectionExtensions
         });
 
 
+        services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
+
+        services.AddScoped<IQuestionRepository, QuestionRepository>();
 
     }
 }

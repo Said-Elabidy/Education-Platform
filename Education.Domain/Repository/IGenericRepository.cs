@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Education.Domain.Repository
+﻿namespace Education.Domain.Repository
 {
     public interface IGenericRepository <T> where T : class
     {
@@ -14,5 +8,6 @@ namespace Education.Domain.Repository
         void Update(T entity);
         void Delete(T entity);
         Task<bool> SaveChangesAsync();
+        void Delete(int Id);
     }
 }

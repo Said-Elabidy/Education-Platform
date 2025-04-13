@@ -22,6 +22,6 @@ namespace Education.Domain.Entities
 
         public Section Section { get; set; } = null!;
 
-        public IEnumerable<UserQuiz> UserQuizzes { get; set; } 
+        public IEnumerable<UserQuiz> UserQuizzes { get; set; } = new List<UserQuiz>();
     }
 }

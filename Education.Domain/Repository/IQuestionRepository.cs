@@ -7,18 +7,8 @@ using System.Threading.Tasks;
 
 namespace Education.Domain.Repository
 {
-    public interface IQuestionRepository
+    public interface IQuestionRepository : IGenericRepository<Question>
     {
-        Task <IEnumerable<Question>> GetAllQuestionsAsync ();
-
-        Task<Question> GetQuestionByIdAsync (int id);
-
-        Task<int> AddQuestionAsync(Question question);
-
-        Task <bool> UpdateQuestion (Question question);
-
-        Task<bool> DeleteQuestionAsync(int Id);
-
-        Task<bool> SaveChangesAsync();
+        
     }
 }
