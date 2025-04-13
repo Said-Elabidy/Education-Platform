@@ -17,8 +17,6 @@ namespace Education.Infrastructure.Configurations
 
             builder.HasKey(vp => new { vp.VideoId, vp.UserId });
 
-            
-
             builder.Property(vp => vp.IsWatched)
                 .IsRequired();
 

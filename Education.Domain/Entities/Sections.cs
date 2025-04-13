@@ -13,8 +13,10 @@ namespace Education.Domain.Entities
 		public bool IsPassSection {  get; set; }	//chech if he pass this section and allow to go next section 
 		public int CourseId { get; set; }
 		public Courses Courses { get; set; }
-		public ICollection<Video> Videos { get; set; }	
-	}
+		public ICollection<Video> Videos { get; set; } = new List<Video>();
+
+        public Quiz Quiz { get; set; } = null!;
+    }
 }
 
 //will be work when IsSequentialWatch on Course table (False)
