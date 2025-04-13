@@ -23,6 +23,7 @@ namespace Education.Infrastructure.Database
                 );
             base.OnModelCreating(builder);
         }
+
         public DbSet<ApplicationUser> applicationUsers { get; set; }
         public DbSet<Courses> courses { get; set; }
         public DbSet<Categories> categories { get; set; }
@@ -32,5 +33,11 @@ namespace Education.Infrastructure.Database
         public DbSet<Video> videos { get; set; }
         public DbSet<VideoProgress> videoProgresses { get; set; }
         public DbSet<Section> sections { get; set; }
+
+        public DbSet<Question> questions {  get; set; }
+
+        public DbSet<Quiz> quizzes { get; set; }
+
+        public DbSet<UserQuiz> userQuizzes { get; set; }
     }
 }
