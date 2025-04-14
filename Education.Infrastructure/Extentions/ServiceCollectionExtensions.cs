@@ -22,6 +22,7 @@ public static class ServiceCollectionExtensions
 
 
         services.AddScoped<IQuestionRepository, QuestionRepository>();
+        services.AddScoped<ICategoryRepository, CategoryRepository>();
 
     }
 }

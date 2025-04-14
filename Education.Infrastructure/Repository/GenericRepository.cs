@@ -1,4 +1,5 @@
 ﻿using Education.Domain.Repository;
+using Education.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 
 namespace Education.Infrastructure.Repository
@@ -6,10 +7,10 @@ namespace Education.Infrastructure.Repository
 
         public class GenericRepository<T> : IGenericRepository<T> where T : class
         {
-            protected readonly DbContext _context;
+            protected readonly EducationPlatformDBContext _context;
             protected readonly DbSet<T> _dbSet;
 
-            public GenericRepository(DbContext context)
+            public GenericRepository(EducationPlatformDBContext context)
             {
                 _context = context;
                 _dbSet = context.Set<T>();
@@ -48,9 +49,16 @@ namespace Education.Infrastructure.Repository
                 return await _context.SaveChangesAsync() > 0;
             }
 
-            public void Delete(int Id)
+        public async Task Delete(int Id)
+        {
+            var entity = await _dbSet.FindAsync(Id);
+            if (entity != null)
             {
-               _context.Remove(Id);
+                _dbSet.Remove(entity);
             }
+            //_context.Remove(Id);
+        }
+
+
     }
 }
