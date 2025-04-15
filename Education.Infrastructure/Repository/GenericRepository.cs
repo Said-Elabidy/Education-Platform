@@ -49,7 +49,7 @@ namespace Education.Infrastructure.Repository
                 return await _context.SaveChangesAsync() > 0;
             }
 
-        public async Task Delete(int Id)
+ public async Task Delete(int Id)
         {
             var entity = await _dbSet.FindAsync(Id);
             if (entity != null)
@@ -58,7 +58,5 @@ namespace Education.Infrastructure.Repository
             }
             //_context.Remove(Id);
         }
-
-
     }
 }
