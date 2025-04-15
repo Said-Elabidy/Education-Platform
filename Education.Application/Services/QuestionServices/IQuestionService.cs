@@ -1,4 +1,5 @@
-﻿using Education.Domain.Entities;
+﻿using Education.Application.DTO_s;
+using Education.Domain.Entities;
 
 namespace Education.Application.Services.QuestionServices
 {
@@ -6,13 +7,13 @@ namespace Education.Application.Services.QuestionServices
     {
         Task<IEnumerable<Question>> GetQuestions();
 
-        Task<Question> GetQuestionById(int id);
+        Task<Question?> GetQuestionById(int id);
 
-        Task <bool>Update(Question question);
+        Task <bool>Update(int Id, UpdateQuestionDto updateQuestionDto);
 
         Task <bool>Delete(int id);
 
-        Task Add(Question question);
+        Task Add(CreateQuestionDto questionDto);
         
     }
 }

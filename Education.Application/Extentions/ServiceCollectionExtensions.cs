@@ -1,8 +1,9 @@
 
-﻿using Education.Application.Services.QuestionServices;
+using Education.Application.Services.CategoryServices;
+using Education.Application.Services.QuestionServices;
+using Education.Application.Services.QuizServices;
 using Education.Application.Services.SectionServices;
 using Education.Domain.Repository;
-
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,5 +18,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ICategoryServices, CategoryService>();
 
         services.AddScoped<ISectionServices, SectionServices>();
+
+        services.AddScoped<IQuizService, QuizService>();
     }
 }
