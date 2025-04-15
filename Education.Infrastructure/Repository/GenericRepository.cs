@@ -49,13 +49,13 @@ namespace Education.Infrastructure.Repository
                 return await _context.SaveChangesAsync() > 0;
             }
 
-            public async Task Delete(int Id)
+ public async Task Delete(int Id)
+        {
+            var entity = await _dbSet.FindAsync(Id);
+            if (entity != null)
             {
-                var entity = await _dbSet.FindAsync(Id);
-                if (entity != null)
-                {
-                    _dbSet.Remove(entity);
-                }
+                _dbSet.Remove(entity);
+            }
             //_context.Remove(Id);
         }
     }
