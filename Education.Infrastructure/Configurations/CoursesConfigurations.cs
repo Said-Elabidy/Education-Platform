@@ -19,6 +19,7 @@ namespace Education.Infrastructure.Configurations
             builder.HasCheckConstraint("CK_Courses_DiscountPercentage", "[DiscountPercentage] >= 0 AND [DiscountPercentage] <= 100");
             builder.Property(c => c.Description).HasMaxLength(1000);
             builder.Property(c => c.Title).HasMaxLength(30);
+            builder.Property(c=>c.CourseStatus).HasConversion<string>().IsRequired().HasMaxLength(20);
           
 
         }

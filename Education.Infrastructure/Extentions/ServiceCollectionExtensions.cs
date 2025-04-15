@@ -12,16 +12,17 @@ public static class ServiceCollectionExtensions
 {
     public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContext<EducationPlatformDBContext>(optionBulder =>
-        {
-            optionBulder.UseSqlServer(configuration.GetConnectionString("cs"));
-        });
+        //services.AddDbContext<EducationPlatformDBContext>(optionBulder =>
+        //{
+        //    optionBulder.UseSqlServer(configuration.GetConnectionString("cs"));
+        //});
 
 
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
 
-        services.AddScoped<IQuestionRepository, QuestionRepository>();
+         services.AddScoped<IQuestionRepository, QuestionRepository>();
 
+        services.AddScoped<ICourseRepository, CourseRepository>();
     }
 }

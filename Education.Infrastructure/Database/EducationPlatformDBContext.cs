@@ -11,7 +11,7 @@ namespace Education.Infrastructure.Database
 {
     public class EducationPlatformDBContext: IdentityDbContext
     {
-        public EducationPlatformDBContext(DbContextOptions options):base(options)
+        public EducationPlatformDBContext(DbContextOptions<EducationPlatformDBContext> options):base(options)
         {
             
         }
@@ -33,11 +33,8 @@ namespace Education.Infrastructure.Database
         public DbSet<Video> videos { get; set; }
         public DbSet<VideoProgress> videoProgresses { get; set; }
         public DbSet<Section> sections { get; set; }
-
         public DbSet<Question> questions {  get; set; }
-
         public DbSet<Quiz> quizzes { get; set; }
-
         public DbSet<UserQuiz> userQuizzes { get; set; }
     }
 }

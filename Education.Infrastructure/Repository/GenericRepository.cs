@@ -1,56 +1,106 @@
 ﻿using Education.Domain.Repository;
+using Education.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Linq.Expressions;
 
 namespace Education.Infrastructure.Repository
 {
 
-        public class GenericRepository<T> : IGenericRepository<T> where T : class
-        {
-            protected readonly DbContext _context;
-            protected readonly DbSet<T> _dbSet;
+	public class GenericRepository<T> : IGenericRepository<T> where T : class
+	{
+		protected readonly EducationPlatformDBContext _context;
+		protected readonly DbSet<T> _dbSet;
 
-            public GenericRepository(DbContext context)
-            {
-                _context = context;
-                _dbSet = context.Set<T>();
-            }
+		public GenericRepository(EducationPlatformDBContext context)
+		{
+			_context = context;
+			_dbSet = context.Set<T>();
+		}
 
-            public async Task<T?> GetByIdAsync(int id)
-            {
-                return await _dbSet.FindAsync(id);
-            }
+		public async Task<T?> GetByIdAsync(int id)
+		{
+			return await _dbSet.FindAsync(id);
+		}
 
-            public async Task<IEnumerable<T>> GetAllAsync()
-            {
-                return await _dbSet.ToListAsync();
-            }
+		public async Task<IEnumerable<T>> GetAllAsync()
+		{
+			return await _dbSet.ToListAsync();
+		}
 
-            public async Task AddAsync(T entity)
-            {
-                await _dbSet.AddAsync(entity);
-            }
+		public async Task AddAsync(T entity)
+		{
+			await _dbSet.AddAsync(entity);
+		}
 
-            public void Update(T entity)
-            {
-            _dbSet.Update(entity);
+		public void Update(T entity)
+		{
+			_dbSet.Update(entity);
 
-            }
+		}
 
-           public void Delete(T entity)
-            {
+		public void Delete(T entity)
+		{
 
-            _dbSet.Remove(entity);
+			_dbSet.Remove(entity);
 
-            }
+		}
 
-             public async Task<bool> SaveChangesAsync()
-            {
-                return await _context.SaveChangesAsync() > 0;
-            }
+		public async Task<bool> SaveChangesAsync()
+		{
+			return await _context.SaveChangesAsync() > 0;
+		}
 
-            public void Delete(int Id)
-            {
-               _context.Remove(Id);
-            }
-    }
+		public void Delete(int Id)
+		{
+			_context.Remove(Id);
+		}
+
+		public async Task<IEnumerable<T>> GetAllEntitiesAsync(Expression<Func<T, bool>> Filter = null, string[] Includes = null, bool track = false, int pageNumber = 0, int pageSize = 0)
+		{
+			IQueryable<T> query = _dbSet.AsQueryable();
+
+			if (track)
+			{
+				query = query.AsNoTracking();
+			}
+			if (Includes != null)
+			{
+				foreach (var Include in Includes)
+					query = query.Include(Include);
+			}
+
+			if (Filter != null)
+			{
+				query = query.Where(Filter);
+			}
+			if(pageNumber != 0&&pageSize != 0)
+			{
+
+				query=query.Skip((pageNumber - 1) * pageSize).Take(pageSize);	
+									
+			}
+			return await query.ToListAsync();
+		}
+
+		public async Task<T?> GetEntityAsync(Expression<Func<T, bool>> filter, string[] Includes = null, bool tracked = false)
+		{
+			IQueryable<T> query = _dbSet.AsQueryable();
+			if (tracked)
+				query = query.AsNoTracking();
+
+			if (Includes != null)
+			{
+				foreach (var Include in Includes)
+					query = query.Include(Include);
+			}
+
+			return await query.SingleOrDefaultAsync(filter);
+		}
+
+		public async Task<int> RecordCount()
+		{
+			return await _dbSet.CountAsync();	
+		}
+	}
 }

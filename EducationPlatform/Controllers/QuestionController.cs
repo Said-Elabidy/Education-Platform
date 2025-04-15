@@ -28,7 +28,7 @@ namespace EducationPlatform.Controllers
 
         // get All Question By It's Id
 
-        [HttpGet("{id}")]
+        [HttpGet("{Id}")]
         public async Task<ActionResult<Question>> GetQuestionById([FromRoute] int Id)
         {
             var question = await _questionService.GetQuestionById(Id);
