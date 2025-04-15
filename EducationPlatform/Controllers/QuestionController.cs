@@ -29,9 +29,9 @@ namespace EducationPlatform.Controllers
         // get All Question By It's Id
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Question>> GetQuestionById([FromRoute] int Id)
+        public async Task<ActionResult<Question>> GetQuestionById([FromRoute] int id)
         {
-            var question = await _questionService.GetQuestionById(Id);
+            var question = await _questionService.GetQuestionById(id);
 
             if (question == null)
             {
@@ -48,17 +48,11 @@ namespace EducationPlatform.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> AddQuestion([FromBody] CreateQuestionDto questionDto)
         {
-            Question question = new Question
-            {
-                Header = questionDto.Header,
-                Order = questionDto.Order,
-                QuizId = questionDto.QuizId,
-                CorrectAnswer = questionDto.CorrectAnswer
-            };
+           if(questionDto == null) { return BadRequest(); } 
 
             try
             {
-                await _questionService.Add(question);
+                await _questionService.Add(questionDto);
                 return Created();
             }
             catch
@@ -69,7 +63,7 @@ namespace EducationPlatform.Controllers
 
         // Delete Question By Id
 
-        [HttpDelete]
+        [HttpDelete("{questionId}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> DeleteQuestion ([FromRoute]int QuestionId)
@@ -84,15 +78,7 @@ namespace EducationPlatform.Controllers
         [HttpPut("{Id}")]
         public async Task<ActionResult> UpdateQuestion([FromRoute]int Id,UpdateQuestionDto updateQuestionDto)
         {
-            var question =await _questionService.GetQuestionById(Id);
-
-            if(question == null) return NotFound();
-
-            question.Header = updateQuestionDto.Header;
-            question.Order = updateQuestionDto.Order;
-            question.CorrectAnswer = updateQuestionDto.CorrectAnswer;
-
-            var isUpdated =await _questionService.Update(question);
+            var isUpdated =await _questionService.Update(Id, updateQuestionDto);
 
             return isUpdated ? NoContent() : NotFound();
         }

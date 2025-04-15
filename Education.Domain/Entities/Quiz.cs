@@ -12,7 +12,7 @@ namespace Education.Domain.Entities
 
         public string Title { get; set; } = default!;
 
-        public int PassingScore { get; set; }
+        public int PassingScore { get; set; } = default(int);
 
         public int SectionId { get; set; }
 

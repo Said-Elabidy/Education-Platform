@@ -1,6 +1,6 @@
-﻿using Education.Application.CategoryServices;
-using Education.Application.DTO_s;
+﻿using Education.Application.DTO_s;
 using Education.Application.DTO_s.CategoryDto_s;
+using Education.Application.Services.CategoryServices;
 using Education.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
