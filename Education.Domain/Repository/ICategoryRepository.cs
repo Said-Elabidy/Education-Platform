@@ -2,8 +2,8 @@
 
 namespace Education.Domain.Repository
 {
-    public interface IQuestionRepository : IGenericRepository<Question>
+    public interface ICategoryRepository : IGenericRepository<Categories>
     {
-        
+
     }
 }

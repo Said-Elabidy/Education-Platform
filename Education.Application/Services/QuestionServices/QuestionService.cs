@@ -1,14 +1,22 @@
-﻿using Education.Domain.Entities;
+﻿using Education.Application.DTO_s;
+using Education.Domain.Entities;
 using Education.Domain.Repository;
 
-namespace Education.Application.QuestionServices
+namespace Education.Application.Services.QuestionServices
 {
     public class QuestionService(IQuestionRepository questionRepository) : IQuestionService
     {
         private readonly IQuestionRepository _questionRepository = questionRepository;
 
-        public async Task Add(Question question)
+        public async Task Add(CreateQuestionDto questionDto)
         {
+            Question question = new Question
+            {
+                Header = questionDto.Header,
+                Order = questionDto.Order,
+                QuizId = questionDto.QuizId,
+                CorrectAnswer = questionDto.CorrectAnswer
+            };
             await _questionRepository.AddAsync(question);
             await _questionRepository.SaveChangesAsync();
         }
@@ -30,9 +38,11 @@ namespace Education.Application.QuestionServices
           
         }
 
-        public Task<Question> GetQuestionById(int id)
+        public async Task<Question?> GetQuestionById(int id)
         {
-            throw new NotImplementedException();
+            var question = await _questionRepository.GetByIdAsync(id);
+
+            return question;
         }
 
         public async Task<IEnumerable<Question>> GetQuestions()
@@ -41,8 +51,15 @@ namespace Education.Application.QuestionServices
             return Quistions;
         }
 
-        public async Task<bool> Update(Question question)
+        public async Task<bool> Update(int Id , UpdateQuestionDto updateQuestionDto)
         {
+            var question = await GetQuestionById(Id);
+
+            if (question == null) return false;
+
+            question.Header = updateQuestionDto.Header;
+            question.Order = updateQuestionDto.Order;
+            question.CorrectAnswer = updateQuestionDto.CorrectAnswer;
             try
             {
                 _questionRepository.Update(question);

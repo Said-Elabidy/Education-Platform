@@ -17,12 +17,17 @@ public static class ServiceCollectionExtensions
         //    optionBulder.UseSqlServer(configuration.GetConnectionString("cs"));
         //});
 
-
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
+        services.AddScoped<IQuestionRepository, QuestionRepository>();
+      
+       services.AddScoped<ISectionRepository, SectionRepository>();
+      
+       services.AddScoped<ICategoryRepository, CategoryRepository>();
 
-         services.AddScoped<IQuestionRepository, QuestionRepository>();
-
-        services.AddScoped<ICourseRepository, CourseRepository>();
+       services.AddScoped<IQuizRepository,QuizRepository>();
+      
+       services.AddScoped<ICourseRepository, CourseRepository>();
+     
     }
 }
