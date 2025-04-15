@@ -13,25 +13,22 @@ namespace Education.Domain.Entities
 		public string Title { get; set; }	
 		public string Description { get; set; }	
 		public decimal Price { get; set; }
-		public int? DiscountPercentage { get; set; }
+		public int DiscountPercentage { get; set; } = 1;
 		public CourseStatus CourseStatus { get; set; }
 		public string CourseImage {  get; set; }	
-		public int SectionNumber { get; set; }	
-		public int VideoNumber { get; set; } = 0; //teach  will insert it compare it with  video count on video  table beased on number will determind course status
+		//public int SectionNumber { get; set; }	
+		//public int VideoNumber { get; set; } = 0; //teach  will insert it compare it with  video count on video  table beased on number will determind course status
 		public bool IsSequentialWatch {  get; set; }	
 		public int CategoriesId { get; set; }
 		public bool IsFree { get; set; } //if all course free no need to buy ,any one can wathch them
 
-		public int Rating { get; set; } //will be calculated by all rating for this course
+		public int? Rating { get; set; } //will be calculated by all rating for this course
         public Categories Categories { get; set; }
         
         public ICollection<Section>? Sections { get; set; }	
 		public ICollection<Payment>? payments { get; set; }
 		
 		public ICollection<StudentCourses> StudentCourses { get; set; } 
-
-
-
 
     }
 }
