@@ -12,11 +12,13 @@ namespace Education.Infrastructure.Repository
 {
     public class QuizRepository : GenericRepository<Quiz>, IQuizRepository
     {
-        private readonly EducationPlatformDBContext _context;
+        // no need to have a private context member cause it's already inherted
+
+        
 
         public QuizRepository(EducationPlatformDBContext context) : base(context)
         {
-            _context = context;
+            
         }
 
         public async Task<Quiz?> GetQuizIncludeQuestionsAsync(int Id)

@@ -1,10 +1,13 @@
-﻿using Education.Domain.Entities;
+﻿
+using Education.Domain.Entities;
 using Education.Domain.Repository;
 using Education.Infrastructure.Database;
 using Education.Infrastructure.Repository;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace Education.Infrastructure.Extentions;
 
@@ -12,12 +15,21 @@ public static class ServiceCollectionExtensions
 {
     public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        //services.AddDbContext<EducationPlatformDBContext>(optionBulder =>
-        //{
-        //    optionBulder.UseSqlServer(configuration.GetConnectionString("cs"));
-        //});
+        var CONNECTION_STRING = configuration.GetConnectionString("cs")
+                ?? throw new InvalidOperationException("no connection string found");
 
-        services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+        services.AddDbContext<EducationPlatformDBContext>(optionBuilder =>
+        {
+            optionBuilder.UseSqlServer(CONNECTION_STRING);
+        });
+        services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<EducationPlatformDBContext>()
+                 .AddSignInManager<SignInManager<ApplicationUser>>()
+                .AddUserManager<UserManager<ApplicationUser>>()
+                .AddRoleManager<RoleManager<IdentityRole>>();
+
+
+        // no need to inject genric repos there's no dependency for them
 
         services.AddScoped<IQuestionRepository, QuestionRepository>();
       

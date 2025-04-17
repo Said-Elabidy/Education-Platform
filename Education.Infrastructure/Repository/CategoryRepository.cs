@@ -11,6 +11,7 @@ namespace Education.Infrastructure.Repository
 {
     public class CategoryRepository : GenericRepository<Categories>, ICategoryRepository
     {
+        // no need to have a private context member cause it's already inherted
 
         public CategoryRepository(EducationPlatformDBContext context) : base(context)
         {

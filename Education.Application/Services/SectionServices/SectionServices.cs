@@ -1,11 +1,7 @@
 ﻿using Education.Application.DTO_s.SectionDTO_s;
 using Education.Domain.Entities;
 using Education.Domain.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Education.Application.Services.SectionServices
 {
@@ -55,9 +51,9 @@ namespace Education.Application.Services.SectionServices
                     SectionId = section.SectionId,
                     SectionName = section.SectionName,
                     IsPassSection = section.IsPassSection,
-                    CourseId = section.CourseId,
-                    Courses = section.Courses,
-                    Videos = section.Videos,
+                    //CourseId = section.CourseId,
+                    //Courses = section.Courses,
+                    //Videos = section.Videos,
                     Quiz = section.Quiz
                 };
 
@@ -73,11 +69,11 @@ namespace Education.Application.Services.SectionServices
             {
                 SectionId = s.SectionId,
                 SectionName = s.SectionName,
-                CourseId = s.CourseId,
-                Courses = s.Courses,
+                //CourseId = s.CourseId,
+                //Courses = s.Courses,
                 IsPassSection = s.IsPassSection,
                 Quiz = s.Quiz,
-                Videos = s.Videos
+                //Videos = s.Videos
             }).ToList();
             return sectionDto;
         }
@@ -89,11 +85,11 @@ namespace Education.Application.Services.SectionServices
             {
                 SectionId = s.SectionId,
                 SectionName = s.SectionName,
-                CourseId = s.CourseId,
-                Courses = s.Courses,
+                //CourseId = s.CourseId,
+                //Courses = s.Courses,
                 IsPassSection = s.IsPassSection,
                 Quiz = s.Quiz,
-                Videos = s.Videos
+                //Videos = s.Videos
             }).ToList();
             return sectionDto;
         }

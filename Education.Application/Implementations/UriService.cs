@@ -1,12 +1,7 @@
 ﻿using Education.Application.Implementations.Abstracts;
-using Education.Application.RequestModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Education.Application.Implementations
 {

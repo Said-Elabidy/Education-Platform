@@ -6,7 +6,8 @@ using System.Linq.Expressions;
 
 namespace Education.Infrastructure.Repository
 {
-        public class GenericRepository<T> : IGenericRepository<T> where T : class
+	// i marked generic repo as abstract cause it's not gonna be injected , it's used as a template
+        public abstract class  GenericRepository<T> : IGenericRepository<T> where T : class
         {
             protected readonly EducationPlatformDBContext _context;
             protected readonly DbSet<T> _dbSet;

@@ -1,5 +1,4 @@
-﻿using Education.Application.DTO_s;
-using Education.Application.DTO_s.QuizDto_s;
+﻿using Education.Application.DTO_s.QuizDto_s;
 using Education.Domain.Entities;
 
 namespace Education.Application.Services.QuizServices

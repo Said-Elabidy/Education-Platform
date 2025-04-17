@@ -1,8 +1,8 @@
 
 using Education.Application.Extentions;
-using Education.Infrastructure.Database;
 using Education.Infrastructure.Extentions;
-using Microsoft.EntityFrameworkCore;
+using EducationPlatform.Extentions;
+
 
 namespace EducationPlatform
 {
@@ -14,22 +14,23 @@ namespace EducationPlatform
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            //builder.Services.AddControllers();
             //Inject DataBase Connection string
-            builder.Services.AddDbContext<EducationPlatformDBContext>(optionBulder =>
-            {
-                optionBulder.UseSqlServer(builder.Configuration.GetConnectionString("cs"));
-            });
+            //builder.Services.AddDbContext<EducationPlatformDBContext>(optionBulder =>
+            //{
+            //    optionBulder.UseSqlServer(builder.Configuration.GetConnectionString("cs"));
+            //});
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            //builder.Services.AddEndpointsApiExplorer();
+            //builder.Services.AddSwaggerGen();
 
 
             // Invoke the static methods of Application Registeration and Infrastructure Registeration
 
             builder.Services.AddInfrastructure(builder.Configuration);
-            builder.Services.AddApplication(builder.Configuration);
+            builder.Services.AddApplication();
+            builder.Services.AddPresentation(builder.Configuration);
              
 
             var app = builder.Build();
@@ -43,7 +44,11 @@ namespace EducationPlatform
 
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();   
+            app.UseStaticFiles();
+            app.UseCors("AllowCustom");
+
+            app.UseAuthentication();
+
             app.UseAuthorization();
 
 
