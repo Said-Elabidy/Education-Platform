@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 
 namespace Education.Domain.Repository
 {
+    // no need to have a private context member cause it's already inherted
+
     public class QuestionRepository : GenericRepository<Question>, IQuestionRepository
     {
 

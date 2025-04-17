@@ -3,25 +3,20 @@ using Education.Domain.Entities;
 using Education.Domain.Repository;
 using Education.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Education.Infrastructure.Repository
 {
-	public class CourseRepository : GenericRepository<Courses> , ICourseRepository<GetCourseDataDTO>
+	public class CourseRepository : GenericRepository<Courses> , ICourseRepository
 	{
-		private readonly EducationPlatformDBContext context;
+		// no need to have a private context member cause it's already inherted
 		public CourseRepository(EducationPlatformDBContext context) : base(context)
 		{ 
-			this.context = context;	
+				
 		}
 
-        public async Task<IEnumerable<GetCourseDataDTO>> GetAllCourses()
+        public async Task<IEnumerable<Courses>> GetAllCourses()
         {
-            return await _dbSet.Select(c => new GetCourseDataDTO() {
+            return await _dbSet.Select(c => new Courses() {
                 CategoriesId = c.CategoriesId, CourseImage = c.CourseImage,
                 CoursesId = c.CoursesId, CourseStatus = c.CourseStatus, 
                 Description = c.Description, DiscountPercentage = c.DiscountPercentage,
@@ -29,11 +24,11 @@ namespace Education.Infrastructure.Repository
                 Rating = c.Rating, Title = c.Title }).ToListAsync();
         }
 
-        public async Task<GetCourseDataDTO?> GetCourseById(int Id)
+        public async Task<Courses?> GetCourseById(int Id)
         {
             var c = await _dbSet.FirstOrDefaultAsync(c => c.CoursesId == Id);
             if (c != null)
-                return new GetCourseDataDTO()
+                return new Courses()
                 {
                     CategoriesId = c.CategoriesId,
                     CourseImage = c.CourseImage,
