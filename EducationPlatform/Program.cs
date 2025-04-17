@@ -1,16 +1,20 @@
 
 using Education.Application.Extentions;
+using Education.Domain.Entities;
 using Education.Infrastructure.Extentions;
+using EducationPlatform.DataSeeds;
 using EducationPlatform.Extentions;
-
+using Microsoft.AspNetCore.Identity;
 
 namespace EducationPlatform
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+         
 
             // Add services to the container.
 
@@ -34,6 +38,14 @@ namespace EducationPlatform
              
 
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+               await AdminSeeder.SeedAdminIfNoneExistAsync(userManager, roleManager);
+            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
