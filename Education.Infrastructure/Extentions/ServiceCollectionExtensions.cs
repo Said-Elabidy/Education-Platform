@@ -42,13 +42,7 @@ public static class ServiceCollectionExtensions
       
        services.AddScoped<ICourseRepository, CourseRepository>();
 
-        using(var scope = services.CreateScope())
-{
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-
-            await AdminSeeder.SeedAdminIfNoneExistAsync(userManager, roleManager);
-        }
+        
 
     }
 }
