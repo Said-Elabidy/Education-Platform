@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace Education.Infrastructure.Extentions;
 
@@ -40,6 +41,14 @@ public static class ServiceCollectionExtensions
        services.AddScoped<IQuizRepository,QuizRepository>();
       
        services.AddScoped<ICourseRepository, CourseRepository>();
-     
+
+        using(var scope = services.CreateScope())
+{
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+            await AdminSeeder.SeedAdminIfNoneExistAsync(userManager, roleManager);
+        }
+
     }
 }

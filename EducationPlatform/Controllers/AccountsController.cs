@@ -214,7 +214,7 @@ namespace EducationPlatform.Controllers
                     return Conflict(new { message = "User with this email already exists." });
 
 
-                var role = await _roleManager.FindByNameAsync(MyRoles.Admin);
+                var role = await _roleManager.FindByNameAsync(MyRoles.User);
 
                 if (role is null)
                     return UnprocessableEntity(new { message = "Role doesn't exist" });

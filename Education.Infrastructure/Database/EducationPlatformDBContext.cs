@@ -24,7 +24,7 @@ namespace Education.Infrastructure.Database
             base.OnModelCreating(builder);
         }
 
-        public DbSet<ApplicationUser> applicationUsers { get; set; }
+       // public DbSet<ApplicationUser> applicationUsers { get; set; }
         public DbSet<Courses> courses { get; set; }
         public DbSet<Categories> categories { get; set; }
         public DbSet<FeedBack> feedBacks { get; set; }
