@@ -40,9 +40,12 @@ public static class ServiceCollectionExtensions
 
        services.AddScoped<IQuizRepository,QuizRepository>();
       
-       services.AddScoped<ICourseRepository, CourseRepository>();
+        services.AddScoped<ICourseRepository<GetCourseDataDTO>, CourseRepository>();
+        services.AddScoped<IFeedBackRepo<FeedBackDTO>, FeedBackRepository>();
+        services.AddScoped<IStudentCourseRepository<StudentCourseDTO>, StudentCourseRepository>();
+        services.AddScoped<IVideoProgressRepository, VideoProgressRepository>();
+        services.AddScoped<IUserQuizReository, UserQuizReository>();
 
-        
 
     }
 }
