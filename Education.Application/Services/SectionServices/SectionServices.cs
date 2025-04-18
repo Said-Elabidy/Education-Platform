@@ -7,9 +7,9 @@ namespace Education.Application.Services.SectionServices
 {
     public class SectionServices : ISectionServices
     {
-        private readonly ISectionRepository _sectionRepo;
+        private readonly ISectionRepository<SectionDto> _sectionRepo;
 
-        public SectionServices(ISectionRepository sectionRepo)
+        public SectionServices(ISectionRepository<SectionDto> sectionRepo)
         {
             _sectionRepo = sectionRepo;
         }
