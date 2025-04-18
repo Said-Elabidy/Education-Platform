@@ -1,4 +1,8 @@
 ﻿
+using Education.Application.DTO_s.CourseDto_s;
+using Education.Application.DTO_s.FeedBackDTO_s;
+using Education.Application.DTO_s.SectionDTO_s;
+using Education.Application.DTO_s.StudentCourse;
 using Education.Domain.Entities;
 using Education.Domain.Repository;
 using Education.Infrastructure.Database;
@@ -34,17 +38,18 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IQuestionRepository, QuestionRepository>();
       
-       services.AddScoped<ISectionRepository, SectionRepository>();
+        services.AddScoped<ISectionRepository<SectionDto>, SectionRepository>();
       
-       services.AddScoped<ICategoryRepository, CategoryRepository>();
+        services.AddScoped<ICategoryRepository, CategoryRepository>();
 
-       services.AddScoped<IQuizRepository,QuizRepository>();
+        services.AddScoped<IQuizRepository,QuizRepository>();
       
         services.AddScoped<ICourseRepository<GetCourseDataDTO>, CourseRepository>();
         services.AddScoped<IFeedBackRepo<FeedBackDTO>, FeedBackRepository>();
         services.AddScoped<IStudentCourseRepository<StudentCourseDTO>, StudentCourseRepository>();
         services.AddScoped<IVideoProgressRepository, VideoProgressRepository>();
         services.AddScoped<IUserQuizReository, UserQuizReository>();
+
 
 
     }

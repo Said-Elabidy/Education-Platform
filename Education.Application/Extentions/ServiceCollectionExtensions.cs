@@ -11,6 +11,7 @@ using Education.Application.Services.StudentCourseServices;
 using Education.Application.Services.VideoPreogressServices;
 using Education.Application.Services.UserQuizServices;
 
+
 namespace Education.Application.Extentions;
 
 public static class ServiceCollectionExtensions
@@ -32,5 +33,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IStudetCourseServices, StudentCourseServices>();
         services.AddScoped<IVideoProgressServices, VideoProgressServices>();
         services.AddScoped<IUserQuizServices, UserQuizServices>();
+
     }
 }

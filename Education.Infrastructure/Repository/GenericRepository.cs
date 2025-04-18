@@ -52,17 +52,19 @@ namespace Education.Infrastructure.Repository
 			return await _context.SaveChangesAsync() > 0;
 		}
           
-          public async Task Delete(int Id)
+          public async Task<bool> Delete(int Id)
         {
             var entity = await _dbSet.FindAsync(Id);
             if (entity != null)
             {
                 _dbSet.Remove(entity);
+				return true;
             }
+			return false;
             //_context.Remove(Id);
         }
 
-          public async Task<IEnumerable<T>> GetAllEntitiesAsync(Expression<Func<T, bool>> Filter = null, string[] Includes = null, bool track = false, int pageNumber = 0, int pageSize = 0)
+          public async Task<IEnumerable<T>> GetAllEntitiesAsync(Expression<Func<T, bool>>? Filter = null, string[]? Includes = null, bool track = false, int pageNumber = 0, int pageSize = 0)
 		{
 			IQueryable<T> query = _dbSet.AsQueryable();
 
@@ -89,7 +91,7 @@ namespace Education.Infrastructure.Repository
 			return await query.ToListAsync();
 		}
           
-          public async Task<T?> GetEntityAsync(Expression<Func<T, bool>> filter, string[] Includes = null, bool tracked = false)
+          public async Task<T?> GetEntityAsync(Expression<Func<T, bool>> filter, string[]? Includes = null, bool tracked = false)
 		{
 			IQueryable<T> query = _dbSet.AsQueryable();
 			if (tracked)
