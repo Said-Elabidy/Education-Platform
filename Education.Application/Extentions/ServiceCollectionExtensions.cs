@@ -6,6 +6,8 @@ using Education.Application.Services.SectionServices;
 using Education.Application.Implementations;
 using Education.Application.Implementations.Abstracts;
 using Microsoft.Extensions.DependencyInjection;
+using Education.Application.Services.VideoServices;
+using Education.Application.Services.Storage_Services;
 
 namespace Education.Application.Extentions;
 
@@ -24,5 +26,10 @@ public static class ServiceCollectionExtensions
 		    services.AddHttpContextAccessor();
         services.AddScoped<ICourseService, CourseService>();
         services.AddScoped<IUriService, UriService>();
+
+        services.AddScoped<IVideoService, VideoService>();
+
+        services.AddScoped<IStorageService, StorageService>();
+
     }
 }

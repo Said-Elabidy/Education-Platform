@@ -42,7 +42,12 @@ public static class ServiceCollectionExtensions
       
        services.AddScoped<ICourseRepository, CourseRepository>();
 
-        
+        services.AddScoped<IVideoRepository, VideoRepository>();
+
+
+
+
+
 
     }
 }
