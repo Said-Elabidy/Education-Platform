@@ -49,7 +49,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IStudentCourseRepository<StudentCourseDTO>, StudentCourseRepository>();
         services.AddScoped<IVideoProgressRepository, VideoProgressRepository>();
         services.AddScoped<IUserQuizReository, UserQuizReository>();
-
+        services.AddScoped<IVideoRepository, VideoRepository>();
 
 
     }

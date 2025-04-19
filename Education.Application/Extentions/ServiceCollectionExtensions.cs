@@ -10,6 +10,12 @@ using Education.Application.Services.FeedBackServices;
 using Education.Application.Services.StudentCourseServices;
 using Education.Application.Services.VideoPreogressServices;
 using Education.Application.Services.UserQuizServices;
+using Education.Application.Services.VideoServices;
+using Education.Application.Services.Storage_Services;
+using Education.Application.Services.FeedBackServices;
+using Education.Application.Services.StudentCourseServices;
+using Education.Application.Services.VideoPreogressServices;
+using Education.Application.Services.UserQuizServices;
 
 
 namespace Education.Application.Extentions;
@@ -29,10 +35,16 @@ public static class ServiceCollectionExtensions
 		    services.AddHttpContextAccessor();
         services.AddScoped<ICourseService, CourseService>();
         services.AddScoped<IUriService, UriService>();
-        services.AddScoped<IFeedBackServices, FeedBackService>();
+
+
+        services.AddScoped<IVideoService, VideoService>();
+
+        services.AddScoped<IStorageService, StorageService>();
+       services.AddScoped<IFeedBackServices, FeedBackService>();
         services.AddScoped<IStudetCourseServices, StudentCourseServices>();
         services.AddScoped<IVideoProgressServices, VideoProgressServices>();
         services.AddScoped<IUserQuizServices, UserQuizServices>();
+
 
     }
 }
