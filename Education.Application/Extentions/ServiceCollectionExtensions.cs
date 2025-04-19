@@ -8,14 +8,15 @@ using Education.Application.Implementations.Abstracts;
 using Microsoft.Extensions.DependencyInjection;
 using Education.Application.Services.FeedBackServices;
 using Education.Application.Services.StudentCourseServices;
-using Education.Application.Services.VideoPreogressServices;
+
 using Education.Application.Services.UserQuizServices;
 using Education.Application.Services.VideoServices;
 using Education.Application.Services.Storage_Services;
 using Education.Application.Services.FeedBackServices;
 using Education.Application.Services.StudentCourseServices;
-using Education.Application.Services.VideoPreogressServices;
+
 using Education.Application.Services.UserQuizServices;
+using Education.Application.Services.VideoProgressServices;
 
 
 namespace Education.Application.Extentions;
@@ -43,6 +44,7 @@ public static class ServiceCollectionExtensions
        services.AddScoped<IFeedBackServices, FeedBackService>();
         services.AddScoped<IStudetCourseServices, StudentCourseServices>();
         services.AddScoped<IVideoProgressServices, VideoProgressServices>();
+
         services.AddScoped<IUserQuizServices, UserQuizServices>();
 
 

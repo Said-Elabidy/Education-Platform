@@ -35,7 +35,7 @@ namespace EducationPlatform.Controllers
             var users = await _userQuizServices.GetUsersByQuizIdAsync(quizId);
             return Ok(users);
         }
-        [HttpPut("{userId}/{quizId}")]
+        [HttpPut("{quizId}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
 
