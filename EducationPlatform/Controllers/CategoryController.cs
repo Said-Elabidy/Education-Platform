@@ -2,6 +2,8 @@
 using Education.Application.DTO_s.CategoryDto_s;
 using Education.Application.Services.CategoryServices;
 using Education.Domain.Entities;
+using Education.Domain.Roles;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,7 +34,7 @@ namespace EducationPlatform.Controllers
         
         // Add new Category
         [HttpPost]
-        [[Authorize(Roles = MyRoles.Admin)]
+        [Authorize(Roles = MyRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> AddCategory([FromBody] CreateCategoryDto categoryDto)
