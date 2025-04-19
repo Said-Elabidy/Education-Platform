@@ -3,6 +3,7 @@ using Education.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Education.Domain.Repository;
 using Education.Application.Services.VideoServices.VideoDurationService;
+using Education.Application.DTO_s.VideoDto_s;
 
 namespace Education.Application.Services.VideoServices
 {
@@ -17,17 +18,7 @@ namespace Education.Application.Services.VideoServices
             _videoRepository = videoRepository;
         }
 
-        public async Task<List<Video>> GetAllAsync()
-        {
-            var videos = await _videoRepository.GetAllAsync();
-
-            if (videos == null || !videos.Any())
-            {
-                return new List<Video>();
-            }
-
-            return videos.ToList();
-        }
+  
 
         public async Task<Video?> GetByIdAsync(int id)
         {
@@ -44,7 +35,7 @@ namespace Education.Application.Services.VideoServices
             // Upload video to Supabase
             var videoFileUrl = await _storageService.UploadToSupabaseAsync(
                 addVideoDto.VideoFile,
-                "videos" // bucket name
+                "videos" // bucket name for Videos
             );
 
             // Upload thumbnail if provided
@@ -53,7 +44,7 @@ namespace Education.Application.Services.VideoServices
             {
                 thumbnailUrl = await _storageService.UploadToSupabaseAsync(
                     addVideoDto.ThumbnailImage,
-                    "thumbnails" // different bucket for images
+                    "thumbnails" // bucket for images
                 );
             }
 
@@ -81,96 +72,71 @@ namespace Education.Application.Services.VideoServices
             
         }
 
-        public Task<bool> DeleteAsync(int id)
+      
+        public async Task<bool> UpdateAsync(int id, UpdateVideoDto updateDto )
         {
-            throw new NotImplementedException();
+            var video =await _videoRepository.GetByIdAsync(id);
+            if(video == null) return false;
+
+            if(updateDto.Title!=null) video.Title = updateDto.Title;
+            if (updateDto.Description != null) video.Description = updateDto.Description;
+            if (updateDto.IsFree != null) video.IsFree = (bool)updateDto.IsFree;
+
+
+            if (updateDto.ThumbnailImage != null)
+            {
+                // Delete old thumbnail if exists
+                if (!string.IsNullOrEmpty(video.VideoImageUrl))
+                {
+                    await _storageService.DeleteFromSupabaseAsync(video.VideoImageUrl, "thumbnails");
+                }
+                video.VideoImageUrl = await _storageService.UploadToSupabaseAsync(
+                    updateDto.ThumbnailImage, "thumbnails");
+            }
+
+            if (updateDto.VideoFile != null)
+            {
+                // Delete old video if exists
+                if (!string.IsNullOrEmpty(video.VideoFileUrl))
+                {
+                    await _storageService.DeleteFromSupabaseAsync(video.VideoFileUrl, "videos");
+                }
+                video.VideoFileUrl = await _storageService.UploadToSupabaseAsync(
+                    updateDto.VideoFile, "videos");
+
+                // Get new video duration
+
+                video.VideoDuration=  await CalculateVideoDuration.GetVideoDurationAsync(updateDto.VideoFile);
+
+            }
+
+
+            _videoRepository.Update(video);
+            await _videoRepository.SaveChangesAsync();
+            return true;
+            
         }
 
-        public Task<Video> UpdateAsync(int id, IFormFile newFile, string title)
+        public async Task<bool> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var video = await _videoRepository.GetByIdAsync(id);
+            if (video == null) return false;
+
+            // Delete the Image file from Supabase
+            if (!string.IsNullOrEmpty(video.VideoImageUrl))
+            {
+             var IsImageDeleted = await _storageService.DeleteFromSupabaseAsync(video.VideoImageUrl, "thumbnails");
+            }
+            // Delete the video file from Supabase
+            var IsVideoDeleted = await _storageService.DeleteFromSupabaseAsync(video.VideoFileUrl, "videos");
+
+            _videoRepository.Delete(video);
+            await _videoRepository.SaveChangesAsync();
+            return true;
         }
 
-        public Task<TimeSpan> GetVideoDurationAsync(string filePath)
-        {
-            throw new NotImplementedException();
-        }
-
-        //public async Task<Domain.Entities.Video> CreateAsync(IFormFile file, AddVideoDto addVideoDto)
-        //{
-        //    // Save file temporarily
-        //    var tempFilePath = Path.GetTempFileName();
-        //    using (var stream = new FileStream(tempFilePath, FileMode.Create))
-        //    {
-        //        await file.CopyToAsync(stream);
-        //    }
-
-        //    // Upload to Supabase
-        //    await _storageService.UploadToSupabaseAsync(tempFilePath, file.FileName);
-
-        //    // Get video duration
-        //    var duration = await GetVideoDurationAsync(tempFilePath);
-
-        //    // Create the Video object
-        //    Domain.Entities.Video video = new Domain.Entities.Video
-        //    {
-        //        Title = addVideoDto.Title,
-        //        Description = addVideoDto.Description,
-        //        VideoDuration = duration,
-        //        IsFree = addVideoDto.IsFree,
-        //        SectionId = addVideoDto.SectionId,
-        //        VideoFileUrl = $"https://jsspgwwxxozqehdbqpge.supabase.co/storage/v1/object/public/videos/{file.FileName}",
-        //        VideoImageUrl = addVideoDto.VideoImageUrl
-        //    };
 
 
-        //    return video;
-        //}
-
-
-        //public async Task<bool> DeleteAsync(int id)
-        //{
-        //    var video = _videos.FirstOrDefault(v => v.VideoId == id);
-        //    if (video == null) return false;
-
-        //    // Delete the video file from Supabase
-        //    await _storageService.DeleteFromSupabaseAsync(video.VideoFileUrl);
-        //    _videos.Remove(video);
-        //    return true;
-        //}
-
-        /*  public async Task<Video> UpdateAsync(int id, IFormFile newFile, string title, string description, bool isFree)
-          {
-              var video = _videos.FirstOrDefault(v => v.VideoId == id);
-              if (video == null) return null;
-
-              var filePath = Path.GetTempFileName();
-
-              // Save the new file locally temporarily
-              using (var stream = new FileStream(filePath, FileMode.Create))
-              {
-                  await newFile.CopyToAsync(stream);
-              }
-
-              // Upload the new file to Supabase
-              await _storageService.UpdateFileInSupabaseAsync(filePath, newFile.FileName);
-
-              // Get the new video duration
-              var videoDuration = await GetVideoDurationAsync(filePath);
-
-              // Update video properties
-              video.Title = title;
-              video.Description = description;
-              video.VideoDuration = videoDuration.TotalSeconds;
-              video.IsFree = isFree;
-              video.VideoFileUrl = $"https://jsspgwwxxozqehdbqpge.supabase.co/storage/v1/object/public/videos/{newFile.FileName}";
-              video.VideoImageUrl = "your-image-url-here"; // Update if you have image logic
-
-              return video;
-          }
-        */
-
-        // Method to extract the video duration
 
     }
 }

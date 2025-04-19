@@ -10,9 +10,6 @@ public class AddVideoDto
     [StringLength(500, ErrorMessage = "Description cannot exceed 500 characters")]
     public string? Description { get; set; }
 
-    //[Required(ErrorMessage = "Video duration is required")]
-    //[Range(typeof(TimeSpan), "00:00:01", "23:59:59", ErrorMessage = "Duration must be between 1 second and 23 hours, 59 minutes, 59 seconds")]
-    //public TimeSpan VideoDuration { get; set; }
 
     [Required(ErrorMessage = "Must specify if video is free or not")]
     public bool IsFree { get; set; }

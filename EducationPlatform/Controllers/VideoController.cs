@@ -1,4 +1,5 @@
-﻿using Education.Application.Services.Storage_Services;
+﻿using Education.Application.DTO_s.VideoDto_s;
+using Education.Application.Services.Storage_Services;
 using Education.Application.Services.VideoServices;
 using Education.Domain.Entities;
 using Microsoft.AspNetCore.Http;
@@ -44,6 +45,7 @@ namespace EducationPlatform.Controllers
 
 
         // Get Video By Id
+
         [HttpGet("{Id}")]
         public async Task<ActionResult<Video>> GetVideoById(int Id)
         {
@@ -54,6 +56,51 @@ namespace EducationPlatform.Controllers
             }
             return Ok(video);
 
+        }
+
+         /* I couldn't Test this becuase swagger makes the properties of pdatevideoDto Required
+          but it should work correctly in angular */
+        [HttpPut("{Id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> UpdateVideo(int Id, [FromForm] UpdateVideoDto updateVideoDto)
+        {
+
+            try
+            {
+                var result = await _videoService.UpdateAsync(Id, updateVideoDto);
+                if (result)
+                {
+                    return Ok("Video updated successfully");
+                }
+                return NotFound($"Video with ID : {Id} not found");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpDelete("{Id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> DeleteVideo (int Id)
+        {
+            try
+            {
+                var result = await _videoService.DeleteAsync(Id);
+                if (result)
+                {
+                    return Ok("Video deleted successfully");
+                }
+                return NotFound($"Video with ID : {Id} not found");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Internal server error: {ex.Message}");
+            }
         }
 
 
