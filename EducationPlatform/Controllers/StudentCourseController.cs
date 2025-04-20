@@ -1,5 +1,6 @@
 ﻿using Education.Application.DTO_s.StudentCourse;
 using Education.Application.Services.StudentCourseServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ namespace EducationPlatform.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class StudentCourseController : ControllerBase
     {
         private readonly IStudetCourseServices _studetCourseServices;

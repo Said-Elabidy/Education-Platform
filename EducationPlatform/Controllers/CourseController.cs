@@ -2,6 +2,8 @@
 using Education.Application.DTO_s;
 using Education.Application.DTO_s.CourseDto_s;
 using Education.Application.RequestModels;
+using Education.Domain.Roles;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,7 +19,8 @@ namespace EducationPlatform.Controllers
 			this.courseService = courseService;
 		}
 		[HttpPost("Add-Course")]
-		public async Task<ActionResult> AddCourseAsync([FromForm] CreateCourseDto courseDto)
+        [Authorize(Roles = MyRoles.Admin)]
+        public async Task<ActionResult> AddCourseAsync([FromForm] CreateCourseDto courseDto)
 		{
 			if (!ModelState.IsValid)
 				return BadRequest(ModelState);
@@ -41,7 +44,8 @@ namespace EducationPlatform.Controllers
 			return Ok(respond);
 		}
 		[HttpDelete("{Id:int}")]
-		public async Task<ActionResult> DeleteAsync(int Id)
+        [Authorize(Roles = MyRoles.Admin)]
+        public async Task<ActionResult> DeleteAsync(int Id)
 		{
 			if (!ModelState.IsValid)
 				return BadRequest(ModelState);
@@ -67,7 +71,8 @@ namespace EducationPlatform.Controllers
 		}
 
 		[HttpPut("updateCourse")]
-		public async Task<ActionResult> UpdateCourse([FromForm] UpdateCourseDto updateCourseDto)
+        [Authorize(Roles = MyRoles.Admin)]
+        public async Task<ActionResult> UpdateCourse([FromForm] UpdateCourseDto updateCourseDto)
 		{
 			if (!ModelState.IsValid)
 				return BadRequest(ModelState);
@@ -80,7 +85,8 @@ namespace EducationPlatform.Controllers
 		}
 
 		[HttpPut("updateCourseAccess")]
-		public async Task<ActionResult> UpdateCourse([FromBody] ChangeAccessDto changeAccessDto)
+        [Authorize(Roles = MyRoles.Admin)]
+        public async Task<ActionResult> UpdateCourse([FromBody] ChangeAccessDto changeAccessDto)
 		{
 			if (!ModelState.IsValid)
 				return BadRequest(ModelState);

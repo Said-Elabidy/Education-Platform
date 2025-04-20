@@ -2,12 +2,15 @@
 using Education.Application.DTO_s.SectionDTO_s;
 using Education.Application.Services.QuizServices;
 using Education.Domain.Entities;
+using Education.Domain.Roles;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EducationPlatform.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class QuizController : ControllerBase
     {
         private readonly IQuizService _quizService;
@@ -28,6 +31,7 @@ namespace EducationPlatform.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = MyRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<Quiz>> AddQuiz(AddQuizDto addQuizDto)
@@ -65,6 +69,7 @@ namespace EducationPlatform.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = MyRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DeleteQuiz(int id)
@@ -75,6 +80,7 @@ namespace EducationPlatform.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = MyRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UpdateQuiz(int id, UpdateQuizDto updateQuizDto)

@@ -2,6 +2,8 @@
 using Education.Application.Services.Storage_Services;
 using Education.Application.Services.VideoServices;
 using Education.Domain.Entities;
+using Education.Domain.Roles;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,6 +23,7 @@ namespace EducationPlatform.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = MyRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Consumes("multipart/form-data")]
@@ -61,6 +64,7 @@ namespace EducationPlatform.Controllers
          /* I couldn't Test this becuase swagger makes the properties of pdatevideoDto Required
           but it should work correctly in angular */
         [HttpPut("{Id}")]
+        [Authorize(Roles = MyRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -83,6 +87,7 @@ namespace EducationPlatform.Controllers
         }
 
         [HttpDelete("{Id}")]
+        [Authorize(Roles = MyRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

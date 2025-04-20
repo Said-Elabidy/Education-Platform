@@ -1,6 +1,8 @@
 ﻿using Education.Application.DTO_s.SectionDTO_s;
 using Education.Application.Services.SectionServices;
 using Education.Domain.Entities;
+using Education.Domain.Roles;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using static System.Collections.Specialized.BitVector32;
@@ -52,6 +54,7 @@ namespace EducationPlatform.Controllers
 
         }
         [HttpDelete("{Id:int}")]
+        [Authorize(Roles = MyRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(int Id)
@@ -62,6 +65,7 @@ namespace EducationPlatform.Controllers
             return NotFound(new { Massage = $"No Sections found for This Id = {Id}" });
         }
         [HttpPost]
+        [Authorize(Roles = MyRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateSection(CreateSectionDto sectionDto)
@@ -77,6 +81,7 @@ namespace EducationPlatform.Controllers
             }
         }
         [HttpPut("{Id:int}")]
+        [Authorize(Roles = MyRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UpdateSection(int Id, UpdateSectionDto updateSection)
