@@ -103,9 +103,9 @@ namespace EducationPlatform.Controllers
             }
         }
 
-        public int Num2 ()
+        public int Num ()
         {
-            return 0;
+            return 100;
         }
     }
 }
