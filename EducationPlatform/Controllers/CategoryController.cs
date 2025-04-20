@@ -73,6 +73,7 @@ namespace EducationPlatform.Controllers
         }
         // Delete Category
         [HttpDelete("{id}")]
+        [Authorize(Roles = MyRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> DeleteCategory([FromRoute] int id)
@@ -95,6 +96,7 @@ namespace EducationPlatform.Controllers
         }
         // Update Category
         [HttpPut("{id}")]
+        [Authorize(Roles = MyRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
