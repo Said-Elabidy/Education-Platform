@@ -1,4 +1,5 @@
-using EducationPlatform.helpers;
+
+using Education.Application.helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -10,7 +11,7 @@ public static class ServiceCollectionExtensions
     public static void AddPresentation(this IServiceCollection services, IConfiguration configuration)
     {
 
-        services.Configure<JWT>(configuration.GetSection("JWT"));
+        
         services.AddCors(options =>
         {
             options.AddPolicy("AllowCustom", policy =>
@@ -42,7 +43,7 @@ public static class ServiceCollectionExtensions
                 ValidateLifetime = true,
                 ValidAudience = configuration["JWT:Audience"],
                 ValidIssuer = configuration["JWT:Issuer"],
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]!))
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:AccessTokenSecret"]!))
 
 
             };

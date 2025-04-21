@@ -26,22 +26,22 @@ namespace Education.Infrastructure.Repository
 
         public async Task<Courses?> GetCourseById(int Id)
         {
-            var c = await _dbSet.FirstOrDefaultAsync(c => c.CoursesId == Id);
-            if (c != null)
-                return new Courses()
-                {
-                    CategoriesId = c.CategoriesId,
-                    CourseImage = c.CourseImage,
-                    CoursesId = c.CoursesId,
-                    CourseStatus = c.CourseStatus,
-                    Description = c.Description,
-                    DiscountPercentage = c.DiscountPercentage,
-                    IsFree = c.IsFree,
-                    IsSequentialWatch = c.IsSequentialWatch,
-                    Price = c.Price,
-                    Rating = c.Rating,
-                    Title = c.Title
-                };
+            return await _dbSet.FirstOrDefaultAsync(c => c.CoursesId == Id);
+            //if (c != null)
+                //return new Courses()
+                //{
+                //    CategoriesId = c.CategoriesId,
+                //    CourseImage = c.CourseImage,
+                //    CoursesId = c.CoursesId,
+                //    CourseStatus = c.CourseStatus,
+                //    Description = c.Description,
+                //    DiscountPercentage = c.DiscountPercentage,
+                //    IsFree = c.IsFree,
+                //    IsSequentialWatch = c.IsSequentialWatch,
+                //    Price = c.Price,
+                //    Rating = c.Rating,
+                //    Title = c.Title
+                //};
             return null;
         }
     }

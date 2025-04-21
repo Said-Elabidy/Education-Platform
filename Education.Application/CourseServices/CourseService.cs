@@ -15,7 +15,7 @@ namespace Education.Application.CourseServices
 	{
 		private readonly ICourseRepository courseRepository;
 		private readonly IImageService imageService;
-		private readonly string CourseFolderName = @"/Courses";
+		private readonly string CourseFolderName = @"/Courses/";
 		private readonly IWebHostEnvironment webHostEnvironment;
 		private readonly IUriService uriService;	
 		public CourseService(ICourseRepository courseRepository, IImageService imageService, IWebHostEnvironment webHostEnvironment
@@ -110,7 +110,7 @@ namespace Education.Application.CourseServices
 				return new ApiResponse<string>(500, "An unexpected error occurred while processing the Delete Course");
 			}
 		}
-		public async Task<ApiResponse<CourseRespondDto>> UpdateCourse(UpdateCourseDto coursesDto)
+		public async Task<ApiResponse<CourseRespondDto>> UpdateCourse(int courseId,UpdateCourseDto coursesDto)
 		{
 			bool IsNewPhotoUpload = false;
 			if (coursesDto is null)
@@ -122,27 +122,36 @@ namespace Education.Application.CourseServices
 				//if (category is null)
 					//new ApiResponse<CourseRespondDto>(404, $"Category Id :{coursesDto.CategoriesId}  Is Not Found");
 
-				var course = await courseRepository.GetEntityAsync(e => e.CoursesId == coursesDto.CourseId && !e.IsDeleted, Includes, true);
+				var course = await courseRepository.GetEntityAsync(e => e.CoursesId == courseId && !e.IsDeleted, Includes, false);
+				
 				if (course is null)
-					return new ApiResponse<CourseRespondDto>(404, $"Course With Id :{coursesDto.CourseId}  Is Not Found");
+					return new ApiResponse<CourseRespondDto>(404, $"Course With Id :{courseId}  Is Not Found");
+				if (coursesDto.CourseImage is not null)
+				{
+					var imageResult = await imageService.UploadImage(coursesDto.CourseImage, CourseFolderName);
+					if (!imageResult.IsUploaded)
+						return new ApiResponse<CourseRespondDto>(400, imageResult.ErrorMessage);
 
-				imageService.DeleteImage($"{CourseFolderName}/{course.CourseImage}");
-
-				var imageResult = await imageService.UploadImage(coursesDto.CourseImage, CourseFolderName);
-				if (!imageResult.IsUploaded)
-					return new ApiResponse<CourseRespondDto>(400, imageResult.ErrorMessage);
-
-				course.CourseImage = imageResult.ImageName;
-				IsNewPhotoUpload = true;
+                    imageService.DeleteImage($"{CourseFolderName}/{course.CourseImage}");
+                    course.CourseImage = imageResult.ImageName;
+					IsNewPhotoUpload = true;
+				}
 				if (!Enum.TryParse<CourseStatus>(coursesDto.CourseStatus, true, out var courseStatus))
 					return new ApiResponse<CourseRespondDto>(400, "Invalid Course Status Value");
 
+				
 				course.CourseStatus = courseStatus;
 				course.LastUpdateOn = DateTime.Now;
+				
 				MapDTOToCourse(course, coursesDto, null);
 
-				courseRepository.Update(course);
-				await courseRepository.SaveChangesAsync();
+				//courseRepository.Update(course);
+				var result = await courseRepository.SaveChangesAsync();
+
+				if (!result)
+				{
+                    return new ApiResponse<CourseRespondDto>(400, "Course isn't saved correctly");
+                }
 
 				var CourseRsepond = MapCourseToDTO(course);
 				return new ApiResponse<CourseRespondDto>(200, CourseRsepond, $"Update Course Data fo{course.Title} Successfully ");
@@ -151,7 +160,7 @@ namespace Education.Application.CourseServices
 			{
 				if (IsNewPhotoUpload)
 				{
-					var course = await courseRepository.GetByIdAsync(coursesDto.CourseId);
+					var course = await courseRepository.GetByIdAsync(courseId);
 					imageService.DeleteImage($"{CourseFolderName}/{course.CourseImage}");
 				}
 				return new ApiResponse<CourseRespondDto>(500, "An unexpected error occurred while processing the Course .");
@@ -159,6 +168,7 @@ namespace Education.Application.CourseServices
 		}
 		private CourseRespondDto MapCourseToDTO(Courses courses)
 		{
+			var BaseUri = uriService.GetBaseUri();
 			var CourseResponse = new CourseRespondDto()
 			{
 				CourseId = courses.CoursesId,
@@ -167,7 +177,7 @@ namespace Education.Application.CourseServices
 				Price = courses.Price,
 				Title = courses.Title,
 				Description = courses.Description,
-				CourseImage = $"{webHostEnvironment.WebRootPath}{CourseFolderName}{courses.CourseImage}",
+				CourseImage = $@"{BaseUri}{CourseFolderName}{courses.CourseImage}",
 				CreateOn = courses.CreateOn,
 				DiscountPercentage = courses.DiscountPercentage,
 				LastUpdateOn = courses.LastUpdateOn,
@@ -191,17 +201,17 @@ namespace Education.Application.CourseServices
 			course.IsSequentialWatch = dto.IsSequentialWatch;
 		}
 
-		public async Task<ApiResponse<string>> ChangeCourseAccess(ChangeAccessDto changeAccessDto)
+		public async Task<ApiResponse<string>> ChangeCourseAccess(int courseId,ChangeAccessDto changeAccessDto)
 		{
 			if (changeAccessDto is null)
 				return new ApiResponse<string>(400, "Course data is missing");
 			try
 			{
-				var course = await courseRepository.GetByIdAsync(changeAccessDto.CourseId);
+				var course = await courseRepository.GetByIdAsync(courseId);
 				if (course is null)
-					return new ApiResponse<string>(404, $"Course With Id :{changeAccessDto.CourseId}  Is Not Found");
+					return new ApiResponse<string>(404, $"Course With Id :{courseId}  Is Not Found");
 				if (course.IsDeleted)
-					return new ApiResponse<string>(404, $"Course With Id :{changeAccessDto.CourseId}  Is Deleted");
+					return new ApiResponse<string>(404, $"Course With Id :{courseId}  Is Deleted");
 
 				string Oldstatus = course.IsFree ? "Free" : "Paid";
 
@@ -229,7 +239,8 @@ namespace Education.Application.CourseServices
 			{
 				string[] Includes = { "Categories" };
 				var courses = await courseRepository.GetAllEntitiesAsync(null, Includes, true,filter.pageNumber,filter.PageSize);
-				if (courses is null)
+				
+                if (courses is null)
 					return new PagedResponse<IEnumerable<CourseRespondDto>>(404, "Still No Cources Craeted On Data Base");
 
 				var totalRecords = await courseRepository.RecordCount();

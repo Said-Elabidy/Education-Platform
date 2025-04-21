@@ -1,8 +1,9 @@
-﻿using System.Linq.Expressions;
+﻿using Education.Domain.Entities;
+using System.Linq.Expressions;
 
 namespace Education.Domain.Repository
 {
-    public interface IGenericRepository <T> where T : class
+    public interface IGenericRepository <T> where T : BaseModal
     {
         Task<T?> GetByIdAsync(int id);
         Task<IEnumerable<T>> GetAllAsync();

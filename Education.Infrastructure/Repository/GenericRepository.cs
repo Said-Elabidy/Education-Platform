@@ -1,4 +1,5 @@
-﻿using Education.Domain.Repository;
+﻿using Education.Domain.Entities;
+using Education.Domain.Repository;
 using Education.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -7,7 +8,7 @@ using System.Linq.Expressions;
 namespace Education.Infrastructure.Repository
 {
 	// i marked generic repo as abstract cause it's not gonna be injected , it's used as a template
-        public abstract class  GenericRepository<T> : IGenericRepository<T> where T : class
+        public abstract class  GenericRepository<T> : IGenericRepository<T> where T : BaseModal
         {
             protected readonly EducationPlatformDBContext _context;
             protected readonly DbSet<T> _dbSet;
@@ -64,7 +65,7 @@ namespace Education.Infrastructure.Repository
 
           public async Task<IEnumerable<T>> GetAllEntitiesAsync(Expression<Func<T, bool>> Filter = null, string[] Includes = null, bool track = false, int pageNumber = 0, int pageSize = 0)
 		{
-			IQueryable<T> query = _dbSet.AsQueryable();
+			IQueryable<T> query = _dbSet.Where(i=>i.IsDeleted==false).AsQueryable();
 
 			if (track)
 			{
@@ -105,7 +106,7 @@ namespace Education.Infrastructure.Repository
 		}
        public async Task<int> RecordCount()
 		{
-			return await _dbSet.CountAsync();	
+			return await _dbSet.Where(i=>i.IsDeleted==false).CountAsync();	
 		}
           		
 	}
