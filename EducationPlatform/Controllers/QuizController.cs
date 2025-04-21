@@ -2,15 +2,12 @@
 using Education.Application.DTO_s.SectionDTO_s;
 using Education.Application.Services.QuizServices;
 using Education.Domain.Entities;
-using Education.Domain.Roles;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EducationPlatform.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class QuizController : ControllerBase
     {
         private readonly IQuizService _quizService;
@@ -29,12 +26,20 @@ namespace EducationPlatform.Controllers
 
             return quizzes.Any() ? Ok(quizzes) : NotFound("No quizzes found");
         }
+        [HttpGet("bySection/{SectionId:int}")]
+        public async Task<ActionResult<GetQuizeDTO?>> GetQuizBySectionId(int SectionId)
+        {
+            var quiz = await _quizService.GetQuieBySectionId(SectionId);
+            if (quiz != null)
+                return Ok(quiz);
+            return NotFound("No Quiz in this Section");
+
+        }   
 
         [HttpPost]
-        [Authorize(Roles = MyRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<Quiz>> AddQuiz(AddQuizDto addQuizDto)
+        public async Task<ActionResult<Quiz>> AddQuiz([FromForm]AddQuizDto addQuizDto)
         {
             try
             {
@@ -69,7 +74,6 @@ namespace EducationPlatform.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = MyRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DeleteQuiz(int id)
@@ -80,10 +84,9 @@ namespace EducationPlatform.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = MyRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> UpdateQuiz(int id, UpdateQuizDto updateQuizDto)
+        public async Task<IActionResult> UpdateQuiz(int id,[FromForm] UpdateQuizDto updateQuizDto)
         {
             var isUpdated = await _quizService.Update(id, updateQuizDto);
 

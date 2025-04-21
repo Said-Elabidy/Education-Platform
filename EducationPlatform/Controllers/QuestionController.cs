@@ -52,7 +52,7 @@ namespace EducationPlatform.Controllers
         [Authorize(Roles = MyRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> AddQuestion([FromBody] CreateQuestionDto questionDto)
+        public async Task<ActionResult> AddQuestion([FromForm] CreateQuestionDto questionDto)
         {
            if(questionDto == null) { return BadRequest(); } 
 
@@ -84,7 +84,7 @@ namespace EducationPlatform.Controllers
 
         [HttpPut("{Id}")]
         [Authorize(Roles = MyRoles.Admin)]
-        public async Task<ActionResult> UpdateQuestion([FromRoute]int Id,UpdateQuestionDto updateQuestionDto)
+        public async Task<ActionResult> UpdateQuestion([FromRoute] int Id,[FromForm] UpdateQuestionDto updateQuestionDto)
         {
             var isUpdated =await _questionService.Update(Id, updateQuestionDto);
 

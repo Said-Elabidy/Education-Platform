@@ -45,7 +45,7 @@ namespace EducationPlatform.Controllers
         [HttpPut("{courseId:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> UpdateStudentCourse(int courseId, UpdateStudentCourseDTO studentCourseDTO)
+        public async Task<IActionResult> UpdateStudentCourse(int courseId,[FromForm] UpdateStudentCourseDTO studentCourseDTO)
         {
             var userId = User.FindFirst("id")?.Value;
             if (userId != null)

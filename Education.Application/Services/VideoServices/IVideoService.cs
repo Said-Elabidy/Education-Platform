@@ -13,6 +13,7 @@ namespace Education.Application.Services.VideoServices
     {
        
         Task<Video?> GetByIdAsync(int id);
+        Task <IEnumerable<GetVideosBySectionIdDto?>> GetAllBySectionIdAsync(int id);
         Task<Video?> CreateAsync(AddVideoDto addVideoDto);
         Task<bool> DeleteAsync(int id);
         Task<bool> UpdateAsync(int id, UpdateVideoDto updateVideoDto);

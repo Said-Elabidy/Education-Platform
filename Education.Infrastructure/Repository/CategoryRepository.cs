@@ -1,6 +1,7 @@
 ﻿using Education.Domain.Entities;
 using Education.Domain.Repository;
 using Education.Infrastructure.Database;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,10 @@ namespace Education.Infrastructure.Repository
         {
 
         }
-    
 
+        public async Task<Categories?> GetNotDeletedCategoryById(int id)
+        {
+            return await _dbSet.Where(c => c.IsDeleted == false).FirstOrDefaultAsync(c => c.CategorieId == id);
+        }
     }
 }

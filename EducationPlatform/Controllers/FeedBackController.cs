@@ -54,7 +54,7 @@ namespace EducationPlatform.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> AddFeedBack(FeedBackDTO feedBack)
+        public async Task<IActionResult> AddFeedBack([FromForm] FeedBackDTO feedBack)
         {
           
             try
@@ -87,7 +87,7 @@ namespace EducationPlatform.Controllers
         [HttpPut("{Id:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> UpdateFeedBack([FromRoute]int Id, [FromBody]UpdateFeedBackDTO feedBackDTO)
+        public async Task<IActionResult> UpdateFeedBack([FromRoute]int Id, [FromForm]UpdateFeedBackDTO feedBackDTO)
         {
             bool Updated = await _feedBackServices.Update(Id, feedBackDTO);
             if (Updated)
