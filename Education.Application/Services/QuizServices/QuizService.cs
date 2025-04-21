@@ -1,4 +1,5 @@
-﻿using Education.Application.DTO_s.QuizDto_s;
+﻿using Education.Application.DTO_s.QuestionDto_s;
+using Education.Application.DTO_s.QuizDto_s;
 using Education.Domain.Entities;
 using Education.Domain.Repository;
 
@@ -40,6 +41,38 @@ namespace Education.Application.Services.QuizServices
 
         }
 
+
+
+        public async Task<GetQuizeDTO?> GetQuieBySectionId(int sectionId)
+        {
+            var quize = await _quizRepository.GetQuizeBySectionId(sectionId);
+            if (quize != null)
+                return new GetQuizeDTO
+                {
+                    Id = quize.Id,
+                    NumOfQuestion = quize.NumOfQuestion,
+                    PassingScore = quize.PassingScore,
+                    SectionId = quize.SectionId,
+                    Title = quize.Title,
+                    //Questions = quize.Questions.Select(q => new QuestionsDTO { CorrectAnswer = q.CorrectAnswer, Header = q.Header, Id = q.Id, Order = q.Order, QuizId = q.QuizId }).ToList()
+                };
+            return null;
+        } 
+        public async Task<GetQuizWithIcloudQuestions?> GetQuieBySectionIdIncloudedQuestions(int sectionId)
+        {
+            var quize = await _quizRepository.GetQuizeBySectionId(sectionId);
+            if (quize != null)
+                return new GetQuizWithIcloudQuestions
+                {
+                    Id = quize.Id,
+                    NumOfQuestion = quize.NumOfQuestion,
+                    PassingScore = quize.PassingScore,
+                    SectionId = quize.SectionId,
+                    Title = quize.Title,
+                    Questions = quize.Questions.Select(q => new QuestionsDTO { CorrectAnswer = q.CorrectAnswer, Header = q.Header, Id = q.Id, Order = q.Order, QuizId = q.QuizId }).ToList()
+                };
+            return null;
+        }
         public async Task<Quiz?> GetQuizById(int id)
         {
             Quiz? quiz = await _quizRepository.GetByIdAsync(id);

@@ -6,6 +6,7 @@ namespace Education.Application.Services.QuizServices
     public interface IQuizService
     {
         Task<IEnumerable<Quiz>> GetQuizzes();
+        Task<GetQuizeDTO?> GetQuieBySectionId(int sectionId);
 
         Task<Quiz?> GetQuizById(int id);
 

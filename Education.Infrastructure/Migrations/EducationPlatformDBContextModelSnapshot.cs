@@ -336,7 +336,6 @@ namespace Education.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VideoId"));
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
@@ -351,16 +350,15 @@ namespace Education.Infrastructure.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<string>("VideoData")
+                    b.Property<TimeSpan>("VideoDuration")
+                        .HasColumnType("time");
+
+                    b.Property<string>("VideoFileUrl")
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<double>("VideoDuration")
-                        .HasColumnType("float");
-
-                    b.Property<string>("VideoImage")
-                        .IsRequired()
+                    b.Property<string>("VideoImageUrl")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
@@ -651,7 +649,7 @@ namespace Education.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("Education.Domain.Entities.Video", "video")
-                        .WithMany("feedBacks")
+                        .WithMany("FeedBacks")
                         .HasForeignKey("VideoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -863,7 +861,7 @@ namespace Education.Infrastructure.Migrations
 
             modelBuilder.Entity("Education.Domain.Entities.Video", b =>
                 {
-                    b.Navigation("feedBacks");
+                    b.Navigation("FeedBacks");
                 });
 
             modelBuilder.Entity("Education.Domain.Entities.ApplicationUser", b =>
