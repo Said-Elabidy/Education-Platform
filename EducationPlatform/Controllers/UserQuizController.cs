@@ -41,7 +41,7 @@ namespace EducationPlatform.Controllers
 
 
 
-        public async Task<IActionResult> UpdateQuizScore( int quizId, [FromBody] int score)
+        public async Task<IActionResult> UpdateQuizScore( int quizId, [FromForm] int score)
         {
             var userId = User.FindFirst("id")?.Value;
             if (string.IsNullOrEmpty(userId))

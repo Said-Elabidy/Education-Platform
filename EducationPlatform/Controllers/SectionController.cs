@@ -1,8 +1,6 @@
 ﻿using Education.Application.DTO_s.SectionDTO_s;
 using Education.Application.Services.SectionServices;
 using Education.Domain.Entities;
-using Education.Domain.Roles;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using static System.Collections.Specialized.BitVector32;
@@ -19,12 +17,34 @@ namespace EducationPlatform.Controllers
         {
             _sectionServices = sectionServices;
         }
-        [HttpGet("by-course /{courseId:int}")]
+        [HttpGet("by-course/{courseId:int}")]
         public async Task<IActionResult> GetSectionsInCourse(int courseId)
         {
             try
             {
                 var sections = await _sectionServices.GetSectionsByCourseId(courseId);
+                if (sections == null || !sections.Any())
+                {
+                    return NotFound(new { Message = $"No sections found for CourseId = {courseId}" });
+                }
+
+                return Ok(sections);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new
+                {
+                    Message = "An error occurred while retrieving sections.",
+                    Details = ex.Message
+                });
+            }
+        }
+        [HttpGet("IncloudedVedio&Quiz-byCourse/{courseId:int}")]
+        public async Task<IActionResult> GetSectionsWithIncloudInCourse(int courseId)
+        {
+            try
+            {
+                var sections = await _sectionServices.GetSectionsByCourseIdWithIncloudQuiz_Video(courseId);
                 if (sections == null || !sections.Any())
                 {
                     return NotFound(new { Message = $"No sections found for CourseId = {courseId}" });
@@ -54,7 +74,6 @@ namespace EducationPlatform.Controllers
 
         }
         [HttpDelete("{Id:int}")]
-        [Authorize(Roles = MyRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(int Id)
@@ -65,10 +84,9 @@ namespace EducationPlatform.Controllers
             return NotFound(new { Massage = $"No Sections found for This Id = {Id}" });
         }
         [HttpPost]
-        [Authorize(Roles = MyRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateSection(CreateSectionDto sectionDto)
+        public async Task<IActionResult> CreateSection([FromForm]CreateSectionDto sectionDto)
         {
             try
             {
@@ -81,10 +99,9 @@ namespace EducationPlatform.Controllers
             }
         }
         [HttpPut("{Id:int}")]
-        [Authorize(Roles = MyRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> UpdateSection(int Id, UpdateSectionDto updateSection)
+        public async Task<IActionResult> UpdateSection(int Id,[FromForm] UpdateSectionDto updateSection)
         {
            bool IsUpdated= await _sectionServices.Update(Id, updateSection);
             if (IsUpdated)

@@ -39,7 +39,7 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IQuestionRepository, QuestionRepository>();
       
-        services.AddScoped<ISectionRepository<SectionDto>, SectionRepository>();
+        services.AddScoped<ISectionRepository<SectionDto, GetSectionsWithIncloudQuiz_Video>, SectionRepository>();
       
         services.AddScoped<ICategoryRepository, CategoryRepository>();
 

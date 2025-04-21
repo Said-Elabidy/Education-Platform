@@ -107,6 +107,31 @@ namespace EducationPlatform.Controllers
                 return BadRequest($"Internal server error: {ex.Message}");
             }
         }
+        [HttpGet("section/{sectionId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<IEnumerable<GetVideosBySectionIdDto>>> GetVideosBySectionId(int sectionId)
+        {
+            try
+            {
+                
+                var videos = await _videoService.GetAllBySectionIdAsync(sectionId);
+
+                
+                if (videos == null || !videos.Any())
+                {
+                    return NotFound($"No videos found for Section ID: {sectionId}");
+                }
+
+                return Ok(videos);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Internal server error: {ex.Message}");
+            }
+        }
+
 
 
     }

@@ -11,14 +11,14 @@ namespace EducationPlatform.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoryController: ControllerBase
+    public class CategoryController : ControllerBase
     {
-        
+
         public CategoryController(ICategoryServices categoryServices)
         {
             _categoryServices = categoryServices ?? throw new ArgumentNullException(nameof(categoryServices));
         }
-        private readonly ICategoryServices _categoryServices ;
+        private readonly ICategoryServices _categoryServices;
         // get All Categories
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Categories>>> GetAllCategories()
@@ -31,13 +31,13 @@ namespace EducationPlatform.Controllers
             return Ok(categories);
         }
         //get All Category By It's Id
-        
+
         // Add new Category
         [HttpPost]
-        [Authorize(Roles = MyRoles.Admin)]
+        //[Authorize(Roles = MyRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> AddCategory([FromBody] CreateCategoryDto categoryDto)
+        public async Task<ActionResult> AddCategory([FromForm] CreateCategoryDto categoryDto)
         {
             Categories category = new Categories
             {
@@ -49,7 +49,7 @@ namespace EducationPlatform.Controllers
 
             };
 
-           
+
             try
             {
                 await _categoryServices.Add(category);
@@ -73,7 +73,6 @@ namespace EducationPlatform.Controllers
         }
         // Delete Category
         [HttpDelete("{id}")]
-        [Authorize(Roles = MyRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> DeleteCategory([FromRoute] int id)
@@ -96,11 +95,10 @@ namespace EducationPlatform.Controllers
         }
         // Update Category
         [HttpPut("{id}")]
-        [Authorize(Roles = MyRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult> UpdateCategory([FromRoute] int id, [FromBody] UpdateCategoryDto categoryDto)
+        public async Task<ActionResult> UpdateCategory([FromRoute] int id, [FromForm] UpdateCategoryDto categoryDto)
         {
             var existingCategory = await _categoryServices.GetCategoryById(id);
             if (existingCategory == null)
@@ -109,11 +107,13 @@ namespace EducationPlatform.Controllers
             }
 
             existingCategory.Name = categoryDto.Name;
-            existingCategory.LastUpdateOn= DateTime.Now;
+            existingCategory.LastUpdateOn = DateTime.Now;
 
             try
             {
-                await _categoryServices.Update(existingCategory);
+                var categoryEntity = new Categories { Name = existingCategory.Name, LastUpdateOn = existingCategory.LastUpdateOn, CreateOn = existingCategory.CreateOn, CategorieId = existingCategory.CategorieId, IsDeleted = false };
+
+                await _categoryServices.Update(categoryEntity);
                 return NoContent();
             }
             catch (Exception ex)

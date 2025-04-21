@@ -135,9 +135,26 @@ namespace Education.Application.Services.VideoServices
             return true;
         }
 
+        public async Task<IEnumerable<GetVideosBySectionIdDto>> GetAllBySectionIdAsync(int id)
+        {
+            
+            var videos = await _videoRepository.GetAllEntitiesAsync(
+                v => v.SectionId == id
+            );
 
-
-
+            
+            return videos.Select(video => new GetVideosBySectionIdDto
+            {
+                VideoId = video.VideoId,
+                Title = video.Title,
+                Description = video.Description,
+                VideoDuration = video.VideoDuration,
+                IsFree = video.IsFree,
+                VideoImageUrl = video.VideoImageUrl,
+                VideoFileUrl = video.VideoFileUrl,
+                SectionId = video.SectionId
+            });
+        }
     }
 }
 
