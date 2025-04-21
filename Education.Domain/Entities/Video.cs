@@ -28,6 +28,8 @@ namespace Education.Domain.Entities
 
         // Navigation property
         public ICollection<FeedBack> FeedBacks { get; set; } = new List<FeedBack>();
+
+        
     }
 
 }
