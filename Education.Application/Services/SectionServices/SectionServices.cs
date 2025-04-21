@@ -117,8 +117,10 @@ namespace Education.Application.Services.SectionServices
         {
             var section = await _sectionRepo.GetByIdAsync(sectionId);
             if (section != null) { 
-                section.Quiz = sectionDto.Quiz;
-                section.SectionName = sectionDto.SectionName;
+                if(sectionDto.SectionName != null)
+                {
+                    section.SectionName = sectionDto.SectionName;
+                }
                 section.IsPassSection = sectionDto.IsPassSection;
                 await _sectionRepo.SaveChangesAsync();
                 return true;
