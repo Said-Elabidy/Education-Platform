@@ -1,7 +1,7 @@
-﻿using Education.Application.CourseServices;
-using Education.Application.DTO_s;
+﻿using Education.Application.DTO_s;
 using Education.Application.DTO_s.CourseDto_s;
 using Education.Application.RequestModels;
+using Education.Application.Services.CourseServices;
 using Education.Domain.Roles;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -18,8 +18,7 @@ namespace EducationPlatform.Controllers
 		{
 			this.courseService = courseService;
 		}
-
-		    [HttpPost("Add-Course")]
+		[HttpPost("Add-Course")]
         [Authorize(Roles = MyRoles.Admin)]
         public async Task<ActionResult> AddCourseAsync([FromForm] CreateCourseDto courseDto)
 		{
@@ -71,11 +70,9 @@ namespace EducationPlatform.Controllers
 			return Ok(response);
 		}
 
-
 		[HttpPut("updateCourse/{courseId:int}")]
-    [Authorize(Roles = MyRoles.Admin)]
-		public async Task<ActionResult> UpdateCourse([FromRoute]int courseId,[FromForm] UpdateCourseDto updateCourseDto)
-
+        [Authorize(Roles = MyRoles.Admin)]
+        public async Task<ActionResult> UpdateCourse([FromRoute] int courseId,[FromForm] UpdateCourseDto updateCourseDto)
 		{
 			if (!ModelState.IsValid)
 				return BadRequest(ModelState);
@@ -88,9 +85,8 @@ namespace EducationPlatform.Controllers
 		}
 
 		[HttpPut("updateCourseAccess/{courseId:int}")]
-     [Authorize(Roles = MyRoles.Admin)]
-		public async Task<ActionResult> UpdateCourse([FromRoute] int courseId, [FromBody] ChangeAccessDto changeAccessDto)
-
+        [Authorize(Roles = MyRoles.Admin)]
+        public async Task<ActionResult> UpdateCourse([FromRoute] int courseId ,[FromBody] ChangeAccessDto changeAccessDto)
 		{
 			if (!ModelState.IsValid)
 				return BadRequest(ModelState);
