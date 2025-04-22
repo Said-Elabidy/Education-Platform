@@ -25,5 +25,9 @@ namespace Education.Infrastructure.Repository
         {
             return await _context.quizzes.Include(q =>q.Questions).AsNoTracking().FirstOrDefaultAsync(x => x.Id == Id);
         }
+        public async Task<Quiz?> GetQuizeBySectionId(int sectionId)
+        {
+            return await _dbSet.Include(q=>q.Questions).FirstOrDefaultAsync(q => q.SectionId == sectionId);
+        }
     }
 }

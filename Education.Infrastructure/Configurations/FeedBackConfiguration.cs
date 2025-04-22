@@ -16,7 +16,7 @@ namespace Education.Infrastructure.Configurations
             builder.HasKey(f => f.FeedBackId);
             builder.Property(f => f.FeedBackId).ValueGeneratedOnAdd();
             builder.HasOne(f => f.ApplicationUser).WithMany(AU => AU.feedBacks).HasForeignKey(f => f.UserId);
-            builder.HasOne(f => f.video).WithMany(v => v.feedBacks).HasForeignKey(f => f.VideoId);
+            builder.HasOne(f => f.video).WithMany(v => v.FeedBacks).HasForeignKey(f => f.VideoId);
             builder.HasCheckConstraint("CK_Courses_Rating_Range", "[Rating] >= 0 AND [Rating] <= 5");
         }
     }

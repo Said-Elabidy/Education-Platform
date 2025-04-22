@@ -15,6 +15,6 @@ namespace Education.Domain.Repository
         void Update(T entity);
         void Delete(T entity);
         Task<bool> SaveChangesAsync();
-        Task Delete(int Id);
+        Task<bool> Delete(int Id);
     }
 }

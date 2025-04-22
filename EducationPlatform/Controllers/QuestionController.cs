@@ -1,6 +1,8 @@
 ﻿using Education.Application.DTO_s;
 using Education.Application.Services.QuestionServices;
 using Education.Domain.Entities;
+using Education.Domain.Roles;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,6 +10,7 @@ namespace EducationPlatform.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class QuestionController(IQuestionService questionService) : ControllerBase
     {
         private readonly IQuestionService _questionService = questionService;
@@ -46,9 +49,10 @@ namespace EducationPlatform.Controllers
         // Add new Question
 
         [HttpPost]
+        [Authorize(Roles = MyRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> AddQuestion([FromBody] CreateQuestionDto questionDto)
+        public async Task<ActionResult> AddQuestion([FromForm] CreateQuestionDto questionDto)
         {
            if(questionDto == null) { return BadRequest(); } 
 
@@ -66,6 +70,7 @@ namespace EducationPlatform.Controllers
         // Delete Question By Id
 
         [HttpDelete("{questionId}")]
+        [Authorize(Roles = MyRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> DeleteQuestion ([FromRoute]int QuestionId)
@@ -78,7 +83,8 @@ namespace EducationPlatform.Controllers
         // Update Question
 
         [HttpPut("{Id}")]
-        public async Task<ActionResult> UpdateQuestion([FromRoute]int Id,UpdateQuestionDto updateQuestionDto)
+        [Authorize(Roles = MyRoles.Admin)]
+        public async Task<ActionResult> UpdateQuestion([FromRoute] int Id,[FromForm] UpdateQuestionDto updateQuestionDto)
         {
             var isUpdated =await _questionService.Update(Id, updateQuestionDto);
 
