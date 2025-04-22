@@ -58,9 +58,13 @@ namespace Education.Application.CourseServices
 				course.CourseStatus = courseStatus;
 
 				await courseRepository.AddAsync(course);
-				await courseRepository.SaveChangesAsync();
+				var result = await courseRepository.SaveChangesAsync();
+                if (!result)
+                {
+                    return new ApiResponse<CourseRespondDto>(400, "Course isn't saved correctly");
+                }
 
-				var CourseRsepond = MapCourseToDTO(course);
+                var CourseRsepond = MapCourseToDTO(course);
 				return new ApiResponse<CourseRespondDto>(200, CourseRsepond, "Created Course Data");
 			}
 			catch
@@ -104,9 +108,14 @@ namespace Education.Application.CourseServices
 				course.LastUpdateOn = DateTime.Now;
 
 				//courseRepository.Update(course);
-				await courseRepository.SaveChangesAsync();
+				var result = await courseRepository.SaveChangesAsync();
 
-				return new ApiResponse<string>(200, $"Course With Id :{CourseId} Is Deleted Successfully .");
+                if (!result)
+                {
+                    return new ApiResponse<string>(400, "Course isn't deleted correctly");
+                }
+
+                return new ApiResponse<string>(200, $"Course With Id :{CourseId} Is Deleted Successfully .");
 			}
 			catch
 			{
@@ -153,7 +162,7 @@ namespace Education.Application.CourseServices
 
 				if (!result)
 				{
-                    return new ApiResponse<CourseRespondDto>(400, "Course isn't saved correctly");
+                    return new ApiResponse<CourseRespondDto>(400, "Course isn't updated correctly");
                 }
 
 				var CourseRsepond = MapCourseToDTO(course);
@@ -223,9 +232,13 @@ namespace Education.Application.CourseServices
 				course.IsFree = changeAccessDto.IsFree;
 
 				//courseRepository.Update(course);
-				await courseRepository.SaveChangesAsync();
+				var result = await courseRepository.SaveChangesAsync();
+                if (!result)
+                {
+                    return new ApiResponse<string>(400, "Course Status isn't changed correctly");
+                }
 
-				string Newstatus = course.IsFree ? "Free" : "Paid";
+                string Newstatus = course.IsFree ? "Free" : "Paid";
 
 				return new ApiResponse<string>(200, $"{course.Title} Course Access Status Is Changed From {Oldstatus} to {Newstatus} Successfuly. ");
 
