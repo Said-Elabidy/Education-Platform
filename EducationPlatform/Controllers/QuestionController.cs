@@ -1,4 +1,5 @@
 ﻿using Education.Application.DTO_s;
+using Education.Application.DTO_s.QuestionDto_s;
 using Education.Application.Services.QuestionServices;
 using Education.Domain.Entities;
 using Education.Domain.Roles;
@@ -10,20 +11,22 @@ namespace EducationPlatform.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+  //  [Authorize]
     public class QuestionController(IQuestionService questionService) : ControllerBase
     {
         private readonly IQuestionService _questionService = questionService;
 
         // get All Questions
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<Question>>> GetAllQuestions()
         {
             var questions =await _questionService.GetQuestions();
 
-            if (questions == null)
+            if (!questions.Any())
             {
-                return NotFound();
+                return NotFound("No Question Found");
             }
 
             return Ok(questions);
@@ -31,16 +34,14 @@ namespace EducationPlatform.Controllers
 
         // get All Question By It's Id
 
-
         [HttpGet("{id}")]
-        public async Task<ActionResult<Question>> GetQuestionById([FromRoute] int id)
-
+        public async Task<ActionResult<QuestionsDTO>> GetQuestionById([FromRoute] int id)
         {
-            var question = await _questionService.GetQuestionById(id);
+            var question = await _questionService.GetQuestionDtoById(id);
 
             if (question == null)
             {
-                return NotFound();
+                return NotFound($"No Question Found with Id : {id}");
             }
 
             return Ok(question);
@@ -49,7 +50,7 @@ namespace EducationPlatform.Controllers
         // Add new Question
 
         [HttpPost]
-        [Authorize(Roles = MyRoles.Admin)]
+        //[Authorize(Roles = MyRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> AddQuestion([FromForm] CreateQuestionDto questionDto)
