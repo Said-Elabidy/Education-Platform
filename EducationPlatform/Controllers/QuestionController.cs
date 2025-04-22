@@ -11,7 +11,7 @@ namespace EducationPlatform.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-  //  [Authorize]
+    [Authorize]
     public class QuestionController(IQuestionService questionService) : ControllerBase
     {
         private readonly IQuestionService _questionService = questionService;
@@ -50,7 +50,7 @@ namespace EducationPlatform.Controllers
         // Add new Question
 
         [HttpPost]
-        //[Authorize(Roles = MyRoles.Admin)]
+        [Authorize(Roles = MyRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> AddQuestion([FromForm] CreateQuestionDto questionDto)
