@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Education.Domain.Entities
 {
-	public class Section:BaseModal
+	public class Section
 	{
 		public int SectionId { get; set; }	
 		public string SectionName { get; set; }		

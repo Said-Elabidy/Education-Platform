@@ -26,6 +26,9 @@ namespace Education.Application.CourseServices
 			this.webHostEnvironment = webHostEnvironment;
 			this.uriService = uriService;	
 		}
+
+		
+
 		public async Task<ApiResponse<CourseRespondDto>> CreateCourse(CreateCourseDto coursesDto)
 		{
 			if (coursesDto == null)
@@ -71,8 +74,8 @@ namespace Education.Application.CourseServices
 			//caculate rating
 			try
 			{
-				string[] Includes = { "Categories" };
-				var course = await courseRepository.GetEntityAsync(e => e.CoursesId == CourseId && !e.IsDeleted, Includes, true);
+				//string[] Includes = { "Categories" };
+				var course = await courseRepository.GetEntityAsync(e => e.CoursesId == CourseId , null, true);
 				if (course is null)
 					return new ApiResponse<CourseRespondDto>(404, $"Course With Id :{CourseId}  Is Not Found");
 
@@ -89,7 +92,7 @@ namespace Education.Application.CourseServices
 		{
 			try
 			{
-				var course = await courseRepository.GetEntityAsync(e => e.CoursesId == CourseId, null, true);
+				var course = await courseRepository.GetByIdAsync(CourseId);
 				if (course is null)
 					return new ApiResponse<string>(404, $"Course With Id :{CourseId}  Is Not Found");
 
@@ -100,7 +103,7 @@ namespace Education.Application.CourseServices
 				course.IsDeleted = true;
 				course.LastUpdateOn = DateTime.Now;
 
-				courseRepository.Update(course);
+				//courseRepository.Update(course);
 				await courseRepository.SaveChangesAsync();
 
 				return new ApiResponse<string>(200, $"Course With Id :{CourseId} Is Deleted Successfully .");
@@ -117,12 +120,12 @@ namespace Education.Application.CourseServices
 				return new ApiResponse<CourseRespondDto>(400, "Course data is missing");
 			try
 			{
-				string[] Includes = { "Categories" };
+			//	string[] Includes = { "Categories" };
 				//var category = await courseRepository.GetEntityAsync(e => e.CategoriesId == coursesDto.CategoriesId&&!e.IsDeleted);
 				//if (category is null)
 					//new ApiResponse<CourseRespondDto>(404, $"Category Id :{coursesDto.CategoriesId}  Is Not Found");
 
-				var course = await courseRepository.GetEntityAsync(e => e.CoursesId == courseId && !e.IsDeleted, Includes, false);
+				var course = await courseRepository.GetEntityAsync(e => e.CoursesId == courseId , null, false);
 				
 				if (course is null)
 					return new ApiResponse<CourseRespondDto>(404, $"Course With Id :{courseId}  Is Not Found");
@@ -207,7 +210,7 @@ namespace Education.Application.CourseServices
 				return new ApiResponse<string>(400, "Course data is missing");
 			try
 			{
-				var course = await courseRepository.GetByIdAsync(courseId);
+				var course = await courseRepository.GetEntityAsync(c=>c.CoursesId==courseId,null,false);
 				if (course is null)
 					return new ApiResponse<string>(404, $"Course With Id :{courseId}  Is Not Found");
 				if (course.IsDeleted)
@@ -219,7 +222,7 @@ namespace Education.Application.CourseServices
 				course.LastUpdateOn = DateTime.Now;
 				course.IsFree = changeAccessDto.IsFree;
 
-				courseRepository.Update(course);
+				//courseRepository.Update(course);
 				await courseRepository.SaveChangesAsync();
 
 				string Newstatus = course.IsFree ? "Free" : "Paid";
@@ -237,15 +240,15 @@ namespace Education.Application.CourseServices
 		{
 			try
 			{
-				string[] Includes = { "Categories" };
-				var courses = await courseRepository.GetAllEntitiesAsync(null, Includes, true,filter.pageNumber,filter.PageSize);
+				//string[] Includes = { "Categories" };
+				var courses = await courseRepository.GetAllEntitiesAsync(null, null, true,filter.pageNumber,filter.PageSize);
 				
-                if (courses is null)
-					return new PagedResponse<IEnumerable<CourseRespondDto>>(404, "Still No Cources Craeted On Data Base");
+                if (!courses.Any())
+					return new PagedResponse<IEnumerable<CourseRespondDto>>(404, "There Is No Courses In The Database");
 
 				var totalRecords = await courseRepository.RecordCount();
 
-				List<CourseRespondDto> coursesRespondsDto= new List<CourseRespondDto>();
+				List<CourseRespondDto> coursesRespondsDto= [];
 				foreach(var course in courses)
 				{
 					var courseDto = MapCourseToDTO(course);
@@ -263,14 +266,14 @@ namespace Education.Application.CourseServices
 		{
 			try
 			{
-				string[] Includes = { "Categories" };
-				var courses = await courseRepository.GetAllEntitiesAsync(e => !e.IsFree, Includes, true, filter.pageNumber, filter.PageSize);
-				if (courses is null)
-					return new PagedResponse<IEnumerable<CourseRespondDto>>(404, "Still No Cources Craeted On Data Base");
+				//string[] Includes = { "Categories" };
+				var courses = await courseRepository.GetAllEntitiesAsync(e => !e.IsFree, null, true, filter.pageNumber, filter.PageSize);
+				if (!courses.Any())
+					return new PagedResponse<IEnumerable<CourseRespondDto>>(404, "There Is No Courses In The Database");
 
 				var totalRecords = await courseRepository.RecordCount();
 
-				List<CourseRespondDto> coursesRespondsDto = new List<CourseRespondDto>();
+				List<CourseRespondDto> coursesRespondsDto = [];
 				foreach (var course in courses)
 				{
 					var courseDto = MapCourseToDTO(course);
@@ -284,5 +287,5 @@ namespace Education.Application.CourseServices
 			}
 		}
 
-	} 
+    } 
 }

@@ -14,7 +14,8 @@ namespace Education.Application.CourseServices
 	   Task<ApiResponse<CourseRespondDto>> UpdateCourse(int courseId,UpdateCourseDto course);
 	   Task<ApiResponse<string>> ChangeCourseAccess(int courseId,ChangeAccessDto changeAccessDto);
 	   Task<PagedResponse<IEnumerable<CourseRespondDto>>> GetAllCources(PaginationFilter filter,string route);
-	   Task<PagedResponse<IEnumerable<CourseRespondDto>>> GetFreeCourses(PaginationFilter filter, string route);
+
+        Task<PagedResponse<IEnumerable<CourseRespondDto>>> GetFreeCourses(PaginationFilter filter, string route);
 	   //update coure complete
 	}
 }

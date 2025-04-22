@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Education.Domain.Entities
 {
-    public class Quiz:BaseModal
+    public class Quiz
     {
         public int Id { get; set; }
 
