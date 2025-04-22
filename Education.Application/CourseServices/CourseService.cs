@@ -13,12 +13,12 @@ namespace Education.Application.CourseServices
 {
 	public class CourseService : ICourseService
 	{
-		private readonly ICourseRepository<GetCourseDataDTO> courseRepository;
+		private readonly ICourseRepository courseRepository;
 		private readonly IImageService imageService;
 		private readonly string CourseFolderName = @"/Courses/";
 		private readonly IWebHostEnvironment webHostEnvironment;
 		private readonly IUriService uriService;	
-		public CourseService(ICourseRepository<GetCourseDataDTO> courseRepository, IImageService imageService, IWebHostEnvironment webHostEnvironment
+		public CourseService(ICourseRepository  courseRepository, IImageService imageService, IWebHostEnvironment webHostEnvironment
 			                , IUriService uriService)
 		{ 
 			this.courseRepository = courseRepository;
