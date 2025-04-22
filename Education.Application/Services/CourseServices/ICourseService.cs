@@ -13,8 +13,8 @@ namespace Education.Application.Services.CourseServices
        Task<ApiResponse<string>> DeletedCourse(int CourseId);
 	   Task<ApiResponse<CourseRespondDto>> UpdateCourse(int courseId,UpdateCourseDto course);
 	   Task<ApiResponse<string>> ChangeCourseAccess(int courseId,ChangeAccessDto changeAccessDto);
-	   Task<PagedResponse<IEnumerable<CourseRespondDto>>> GetAllCources(PaginationFilter filter,string route);
-
+	   Task<PagedResponse<IEnumerable<CourseRespondDto>>> GetAllCources(PaginationFilter? filter = null,string? route = null);
+        
         Task<PagedResponse<IEnumerable<CourseRespondDto>>> GetFreeCourses(PaginationFilter filter, string route);
 	   //update coure complete
 	}

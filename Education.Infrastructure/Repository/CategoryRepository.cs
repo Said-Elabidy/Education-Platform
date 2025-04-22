@@ -19,6 +19,15 @@ namespace Education.Infrastructure.Repository
 
         }
 
+        public async Task<Categories?> GetCategoryCourseById(int courseId)
+        {
+            return await _dbSet
+                .Where(c => c.IsDeleted == false)
+                .Include(c => c.courses)
+                .FirstOrDefaultAsync(c => c.courses!.Any(course => course.CoursesId == courseId));
+             
+        }
+
         public async Task<Categories?> GetNotDeletedCategoryById(int id)
         {
             return await _dbSet.Where(c => c.IsDeleted == false).FirstOrDefaultAsync(c => c.CategorieId == id);

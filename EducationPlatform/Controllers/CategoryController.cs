@@ -71,6 +71,17 @@ namespace EducationPlatform.Controllers
             }
             return Ok(category);
         }
+
+        [HttpGet("course/{courseId:int}")]
+        public async Task<ActionResult<Categories>> GetCategoryByCourseId([FromRoute] int courseId)
+        {
+            var category = await _categoryServices.GetCategoryCourseById(courseId);
+            if (category == null)
+            {
+                return NotFound(new {message=$"There is No Category with this Course Id {courseId} "});
+            }
+            return Ok(category);
+        }
         // Delete Category
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
