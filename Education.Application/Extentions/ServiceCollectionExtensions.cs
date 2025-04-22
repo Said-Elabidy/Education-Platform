@@ -6,6 +6,10 @@ using Education.Application.Services.SectionServices;
 using Education.Application.Implementations;
 using Education.Application.Implementations.Abstracts;
 using Microsoft.Extensions.DependencyInjection;
+
+using Education.Application.helpers;
+using Microsoft.Extensions.Configuration;
+using Education.Application.Services.JwtServices;
 using Education.Application.Services.FeedBackServices;
 using Education.Application.Services.StudentCourseServices;
 
@@ -19,12 +23,16 @@ using Education.Application.Services.UserQuizServices;
 using Education.Application.Services.VideoProgressServices;
 
 
+
 namespace Education.Application.Extentions;
 
 public static class ServiceCollectionExtensions
 {
-    public static void AddApplication(this IServiceCollection services)
+    public static void AddApplication(this IServiceCollection services , IConfiguration configuration)
     {
+
+        services.Configure<JWT>(configuration.GetSection("JWT"));
+        services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IQuestionService, QuestionService>();
         services.AddScoped<ICategoryServices, CategoryService>();
 

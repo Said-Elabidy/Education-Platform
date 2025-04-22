@@ -18,7 +18,8 @@ namespace EducationPlatform.Controllers
 		{
 			this.courseService = courseService;
 		}
-		[HttpPost("Add-Course")]
+
+		    [HttpPost("Add-Course")]
         [Authorize(Roles = MyRoles.Admin)]
         public async Task<ActionResult> AddCourseAsync([FromForm] CreateCourseDto courseDto)
 		{
@@ -70,28 +71,31 @@ namespace EducationPlatform.Controllers
 			return Ok(response);
 		}
 
-		[HttpPut("updateCourse")]
-        [Authorize(Roles = MyRoles.Admin)]
-        public async Task<ActionResult> UpdateCourse([FromForm] UpdateCourseDto updateCourseDto)
+
+		[HttpPut("updateCourse/{courseId:int}")]
+    [Authorize(Roles = MyRoles.Admin)]
+		public async Task<ActionResult> UpdateCourse([FromRoute]int courseId,[FromForm] UpdateCourseDto updateCourseDto)
+
 		{
 			if (!ModelState.IsValid)
 				return BadRequest(ModelState);
 
-			var respond = await courseService.UpdateCourse(updateCourseDto);		
+			var respond = await courseService.UpdateCourse(courseId,updateCourseDto);		
 			if (respond.StatusCode != 200)
 				return StatusCode(respond.StatusCode, respond);
 
 			return Ok(respond);
 		}
 
-		[HttpPut("updateCourseAccess")]
-        [Authorize(Roles = MyRoles.Admin)]
-        public async Task<ActionResult> UpdateCourse([FromBody] ChangeAccessDto changeAccessDto)
+		[HttpPut("updateCourseAccess/{courseId:int}")]
+     [Authorize(Roles = MyRoles.Admin)]
+		public async Task<ActionResult> UpdateCourse([FromRoute] int courseId, [FromBody] ChangeAccessDto changeAccessDto)
+
 		{
 			if (!ModelState.IsValid)
 				return BadRequest(ModelState);
 
-			var respond = await courseService.ChangeCourseAccess(changeAccessDto);
+			var respond = await courseService.ChangeCourseAccess(courseId,changeAccessDto);
 			if (respond.StatusCode != 200)
 				return StatusCode(respond.StatusCode, respond);
 
