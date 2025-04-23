@@ -249,12 +249,15 @@ namespace Education.Application.Services.CourseServices
 			}
 		}
 
-		public async Task<PagedResponse<IEnumerable<CourseRespondDto>>> GetAllCources(PaginationFilter filter,string route)
+		public async Task<PagedResponse<IEnumerable<CourseRespondDto>>> GetAllCources(PaginationFilter filter =null,string route=null)
 		{
 			try
 			{
-				//string[] Includes = { "Categories" };
-				var courses = await courseRepository.GetAllEntitiesAsync(null, null, true,filter.pageNumber,filter.PageSize);
+				if(filter == null)
+                    filter = new PaginationFilter { pageNumber= 0, PageSize = 0};
+
+                //string[] Includes = { "Categories" };
+                var courses = await courseRepository.GetAllEntitiesAsync(null, null, true,filter.pageNumber,filter.PageSize);
 				
                 if (!courses.Any())
 					return new PagedResponse<IEnumerable<CourseRespondDto>>(404, "There Is No Courses In The Database");

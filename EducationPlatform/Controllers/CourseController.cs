@@ -19,7 +19,7 @@ namespace EducationPlatform.Controllers
 			this.courseService = courseService;
 		}
 		[HttpPost("Add-Course")]
-        [Authorize(Roles = MyRoles.Admin)]
+       // [Authorize(Roles = MyRoles.Admin)]
         public async Task<ActionResult> AddCourseAsync([FromForm] CreateCourseDto courseDto)
 		{
 			if (!ModelState.IsValid)
@@ -70,7 +70,19 @@ namespace EducationPlatform.Controllers
 			return Ok(response);
 		}
 
-		[HttpPut("updateCourse/{courseId:int}")]
+        [HttpGet("All-Courses")]
+        public async Task<ActionResult> GetAllCoursesAsync()
+        {
+            var route = Request.Path.Value;
+            var response = await courseService.GetAllCources();
+            if (response.StatusCode != 200)
+            {
+                return StatusCode(response.StatusCode, response);
+            }
+            return Ok(response);
+        }
+
+        [HttpPut("updateCourse/{courseId:int}")]
         [Authorize(Roles = MyRoles.Admin)]
         public async Task<ActionResult> UpdateCourse([FromRoute] int courseId,[FromForm] UpdateCourseDto updateCourseDto)
 		{
