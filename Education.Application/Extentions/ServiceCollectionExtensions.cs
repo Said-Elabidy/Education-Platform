@@ -20,6 +20,7 @@ using Education.Application.Services.CourseServices;
 using Microsoft.Extensions.Configuration;
 using Education.Application.helpers;
 using Education.Application.Services.JwtServices;
+using Education.Application.Services.PaymentServices;
 
 
 namespace Education.Application.Extentions;
@@ -51,6 +52,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IVideoProgressServices, VideoProgressServices>();
 
         services.AddScoped<IUserQuizServices, UserQuizServices>();
+        services.AddScoped<IPaymentServices, PaymentServices>();
 
 
     }
