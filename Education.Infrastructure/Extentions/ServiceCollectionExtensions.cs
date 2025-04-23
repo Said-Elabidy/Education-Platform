@@ -1,6 +1,7 @@
 ﻿
 using Education.Application.DTO_s.CourseDto_s;
 using Education.Application.DTO_s.FeedBackDTO_s;
+using Education.Application.DTO_s.PaymentDtos;
 using Education.Application.DTO_s.SectionDTO_s;
 using Education.Application.DTO_s.StudentCourse;
 using Education.Application.DTO_s.VideoProgressDto_s;
@@ -52,6 +53,7 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IUserQuizReository, UserQuizReository>();
         services.AddScoped<IVideoRepository, VideoRepository>();
+        services.AddScoped<IpaymentReposatory<PaymentDtos>, PaymentReposatory>();
 
 
     }
