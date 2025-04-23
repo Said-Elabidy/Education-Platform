@@ -3,6 +3,7 @@ using Education.Domain.Roles;
 using EducationPlatform.helpers;
 using EducationPlatform.ViewModels;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -15,308 +16,350 @@ using System.Text;
 namespace EducationPlatform.Controllers
 {
 
-    [ApiController]
-    public class AccountsController : ControllerBase
-    {
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly JWT _jwtOptions;
-        public AccountsController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IOptions<JWT> jwtOptions)
-        {
-            _signInManager = signInManager;
-            _userManager = userManager;
-            _roleManager = roleManager;
-            _jwtOptions = jwtOptions.Value!;
-        }
-
-
-        private async Task<string> GenerateJwt(ApplicationUser user, JWT options)
-        {
-
-            var roles = await _userManager.GetRolesAsync(user);
-            var secret = options.Secret;
-            var encodedSecret = Encoding.UTF8.GetBytes(secret);
-            var key = new SymmetricSecurityKey(encodedSecret);
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var _user = new
-            {
-                name = $"{user.FirstName} {user.LastName}",
-                id = user.Id,
-                email = user.Email,
-                role = roles
-            };
-
-            List<Claim> claims = [
-                new (JwtRegisteredClaimNames.Jti , Guid.NewGuid().ToString()),
-                new(JwtRegisteredClaimNames.Sub, user.Id),
+	[ApiController]
+	public class AccountsController : ControllerBase
+	{
+		private readonly SignInManager<ApplicationUser> _signInManager;
+		private readonly UserManager<ApplicationUser> _userManager;
+		private readonly RoleManager<IdentityRole> _roleManager;
+		private readonly JWT _jwtOptions;
+		private readonly IEmailSender emailSender;
+		private readonly EmailVerificationCode emailVerificationCode;
+		private readonly IWebHostEnvironment webHostEnvironment;
+		public AccountsController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager,
+			RoleManager<IdentityRole> roleManager, IOptions<JWT> jwtOptions, IWebHostEnvironment webHostEnvironment
+			, EmailVerificationCode emailVerificationCode, IEmailSender emailSender)
+		{
+			_signInManager = signInManager;
+			_userManager = userManager;
+			_roleManager = roleManager;
+			_jwtOptions = jwtOptions.Value!;
+			this.webHostEnvironment = webHostEnvironment;
+			this.emailVerificationCode = emailVerificationCode;
+			this.emailSender = emailSender;
+		}
+
+
+		private async Task<string> GenerateJwt(ApplicationUser user, JWT options)
+		{
+
+			var roles = await _userManager.GetRolesAsync(user);
+			var secret = options.Secret;
+			var encodedSecret = Encoding.UTF8.GetBytes(secret);
+			var key = new SymmetricSecurityKey(encodedSecret);
+			var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+			var _user = new
+			{
+				name = $"{user.FirstName} {user.LastName}",
+				id = user.Id,
+				email = user.Email,
+				role = roles
+			};
+
+			List<Claim> claims = [
+				new (JwtRegisteredClaimNames.Jti , Guid.NewGuid().ToString()),
+				new(JwtRegisteredClaimNames.Sub, user.Id),
+
+				new ("name", $"{user.FirstName} {user.LastName}"),
+				new ("email", user.Email!),
+				 new ("id", user.Id),
+				new ("role", roles.FirstOrDefault()!)
+							];
+
+			var token = new JwtSecurityToken
+			(
+
+				signingCredentials: creds,
+				issuer: options.Issuer,
+				claims: claims,
+				expires: DateTime.UtcNow.AddMinutes(options.LifetimeInMinutes),
+				audience: options.Audience
+
+
+			);
+
+			return new JwtSecurityTokenHandler().WriteToken(token);
+		}
+
+		private ClaimsPrincipal? ValidateRefreshToken(string token, JWT options, out bool isExpired)
+		{
+			isExpired = false;
+			var tokenValidationParameters = new TokenValidationParameters
+			{
+				ValidateLifetime = false,
+				ClockSkew = TimeSpan.Zero,
+				ValidateIssuer = true,
+				ValidIssuer = options.Issuer,
+				ValidateAudience = true,
+				ValidAudience = options.Audience,
+				ValidateIssuerSigningKey = true,
+				IssuerSigningKey = new SymmetricSecurityKey(
+					Encoding.UTF8.GetBytes(options.Secret)),
+
+
+
+			};
+
+			var tokenHandler = new JwtSecurityTokenHandler();
+			try
+			{
+				var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
+
+				if (securityToken is not JwtSecurityToken jwtToken ||
+					!jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+					return null;
+
+
+				if (securityToken is JwtSecurityToken _jwtToken)
+				{
 
-    new ("name", $"{user.FirstName} {user.LastName}"),
-    new ("email", user.Email!),
-     new ("id", user.Id),
-    new ("role", roles.FirstOrDefault()!)
-                ];
-
-            var token = new JwtSecurityToken
-            (
-
-                signingCredentials: creds,
-                issuer: options.Issuer,
-                claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(options.LifetimeInMinutes),
-                audience: options.Audience
-
-
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
-        private ClaimsPrincipal? ValidateRefreshToken(string token, JWT options, out bool isExpired)
-        {
-            isExpired = false;
-            var tokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateLifetime = false,
-                ClockSkew = TimeSpan.Zero,
-                ValidateIssuer = true,
-                ValidIssuer = options.Issuer,
-                ValidateAudience = true,
-                ValidAudience = options.Audience,
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(options.Secret)),
-
-
-
-            };
+					var exp = _jwtToken.Payload.Expiration;
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            try
-            {
-                var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
+					if (exp.HasValue)
+					{
+						var expiryDate = DateTimeOffset.FromUnixTimeSeconds(exp.Value).UtcDateTime;
 
-                if (securityToken is not JwtSecurityToken jwtToken ||
-                    !jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
-                    return null;
+						if (expiryDate < DateTime.UtcNow)
+						{
+							isExpired = true;
+							return null;
+						}
+					}
 
+					return principal;
+				}
 
-                if (securityToken is JwtSecurityToken _jwtToken)
-                {
+				return principal;
+			}
+			catch
+			{
+				return null;
+			}
 
-                    var exp = _jwtToken.Payload.Expiration;
+		}
 
-                    if (exp.HasValue)
-                    {
-                        var expiryDate = DateTimeOffset.FromUnixTimeSeconds(exp.Value).UtcDateTime;
+		[HttpPost]
+		[Route("Login")]
+		public async Task<IActionResult> Login([FromBody] LoginViewModel model)
+		{
+			if (ModelState.IsValid)
+			{
 
-                        if (expiryDate < DateTime.UtcNow)
-                        {
-                            isExpired = true;
-                            return null;
-                        }
-                    }
 
-                    return principal;
-                }
+				var user = await _userManager.FindByEmailAsync(model.Email);
+				if (user is null)
+					return Unauthorized(new { message = "Invalid login attempt , email or password incorrect" });
 
-                return principal;
-            }
-            catch
-            {
-                return null;
-            }
 
-        }
+				var result = await _userManager.CheckPasswordAsync(user, model.Password);
 
-        [HttpPost]
-        [Route("Login")]
-        public async Task<IActionResult> Login([FromBody] LoginViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
+				if (!result)
+					return Unauthorized(new { message = "Invalid login attempt , email or password incorrect" });
 
 
-                var user = await _userManager.FindByEmailAsync(model.Email);
-                if (user is null)
-                    return Unauthorized(new { message = "Invalid login attempt , email or password incorrect" });
 
+				var expiry = 60 * 24 * 15;
+				var refreshToken = await GenerateJwt(user, _jwtOptions with { LifetimeInMinutes = expiry });
 
-                var result = await _userManager.CheckPasswordAsync(user, model.Password);
+				var SessionCookieOptions = new CookieOptions
+				{
+					HttpOnly = true,  // Can't be accessed via JS
+					Secure = true,    // Ensures cookies are sent over HTTPS
+					SameSite = SameSiteMode.None, // Prevents CSRF
+					Path = "/",
+					// Expires = DateTime.UtcNow.AddMinutes(expiry)  // Expiry time of refresh token
+				};
 
-                if (!result)
-                    return Unauthorized(new { message = "Invalid login attempt , email or password incorrect" });
+				var CookieOptions = new CookieOptions
+				{
+					HttpOnly = true,  // Can't be accessed via JS
+					Secure = true,    // Ensures cookies are sent over HTTPS
+					SameSite = SameSiteMode.None, // Prevents CSRF
+					Path = "/",
+					Expires = DateTime.UtcNow.AddMinutes(1)  // Expiry time of refresh token
+				};
 
 
 
-                var expiry = 60 * 24 * 15;
-                var refreshToken = await GenerateJwt(user, _jwtOptions with { LifetimeInMinutes = expiry });
+				Response.Cookies.Append("refreshToken", refreshToken, model.RememberMe ? CookieOptions : SessionCookieOptions);
 
-                var SessionCookieOptions = new CookieOptions
-                {
-                    HttpOnly = true,  // Can't be accessed via JS
-                    Secure = true,    // Ensures cookies are sent over HTTPS
-                    SameSite = SameSiteMode.None, // Prevents CSRF
-                    Path = "/",
-                    // Expires = DateTime.UtcNow.AddMinutes(expiry)  // Expiry time of refresh token
-                };
+				var accessToken = await GenerateJwt(user, _jwtOptions);
 
-                var CookieOptions = new CookieOptions
-                {
-                    HttpOnly = true,  // Can't be accessed via JS
-                    Secure = true,    // Ensures cookies are sent over HTTPS
-                    SameSite = SameSiteMode.None, // Prevents CSRF
-                    Path = "/",
-                    Expires = DateTime.UtcNow.AddMinutes(1)  // Expiry time of refresh token
-                };
+				var roles = await _userManager.GetRolesAsync(user);
+				return Ok(new
+				{
+					accessToken,
+					name = $"{user.FirstName} {user.LastName}",
+					id = user.Id,
+					email = user.Email,
+					role = roles.FirstOrDefault()!
+				});
+			}
+			return BadRequest();
+		}
 
 
 
-                Response.Cookies.Append("refreshToken", refreshToken, model.RememberMe ? CookieOptions : SessionCookieOptions);
 
-                var accessToken = await GenerateJwt(user, _jwtOptions);
+		[HttpPost]
+		[Route("Register")]
+		public async Task<IActionResult> Register([FromBody] RegisterViewModel model)
+		{
 
-                var roles = await _userManager.GetRolesAsync(user);
-                return Ok(new
-                {
-                    accessToken,
-                    name = $"{user.FirstName} {user.LastName}",
-                    id = user.Id,
-                    email = user.Email,
-                    role = roles.FirstOrDefault()!
-                });
+			if (ModelState.IsValid)
+			{
 
 
-            }
 
 
-            return BadRequest();
-        }
 
+				var userExists = await _userManager.FindByEmailAsync(model.Email);
+				if (userExists is not null)
+					return Conflict(new { message = "User with this email already exists." });
 
 
+				var role = await _roleManager.FindByNameAsync(MyRoles.User);
 
-        [HttpPost]
-        [Route("Register")]
-        public async Task<IActionResult> Register([FromBody] RegisterViewModel model)
-        {
+				if (role is null)
+					return UnprocessableEntity(new { message = "Role doesn't exist" });
 
-            if (ModelState.IsValid)
-            {
 
+				var user = new ApplicationUser { UserName = model.Email, FirstName = model.FirstName, LastName = model.LastName, Email = model.Email };
+				var result = await _userManager.CreateAsync(user, model.Password);
 
+				if (result.Succeeded)
+				{
 
+					await _userManager.AddToRoleAsync(user, role.Name!);
 
+					var check = await _userManager.CheckPasswordAsync(user, model.Password);
 
-                var userExists = await _userManager.FindByEmailAsync(model.Email);
-                if (userExists is not null)
-                    return Conflict(new { message = "User with this email already exists." });
+					if (!check)
+						return Unauthorized();
 
+					var expiry = 60 * 24 * 15;
+					var refreshToken = await GenerateJwt(user, _jwtOptions with { LifetimeInMinutes = expiry });
 
-                var role = await _roleManager.FindByNameAsync(MyRoles.User);
+					var SessionCookieOptions = new CookieOptions
+					{
+						HttpOnly = true,  // Can't be accessed via JS
+						Secure = true,    // Ensures cookies are sent over HTTPS
+						SameSite = SameSiteMode.None, // Prevents CSRF
+						Path = "/",
+						// Expires = DateTime.UtcNow.AddMinutes(expiry)  // Expiry time of refresh token
+					};
 
-                if (role is null)
-                    return UnprocessableEntity(new { message = "Role doesn't exist" });
 
+					Response.Cookies.Append("refreshToken", refreshToken, SessionCookieOptions);
 
-                var user = new ApplicationUser { UserName = model.Email, FirstName = model.FirstName, LastName = model.LastName, Email = model.Email };
-                var result = await _userManager.CreateAsync(user, model.Password);
+					var accessToken = await GenerateJwt(user, _jwtOptions);
 
-                if (result.Succeeded)
-                {
 
-                    await _userManager.AddToRoleAsync(user, role.Name!);
 
-                    var check = await _userManager.CheckPasswordAsync(user, model.Password);
+					var code = emailVerificationCode.GenerateCode(user.Email);
+					var userName = $"{user.FirstName} {user.LastName}";
 
-                    if (!check)
-                        return Unauthorized();
+					var filePath = $"{webHostEnvironment.WebRootPath}/Templet/RegisterEmailConfirm.html";
+					var emailBody = await System.IO.File.ReadAllTextAsync(filePath);
+					emailBody = emailBody.Replace("{AppName}", "Education Platform")
+									.Replace("{UserName}", userName)
+									.Replace("{Code}", code);
 
-                    var expiry = 60 * 24 * 15;
-                    var refreshToken = await GenerateJwt(user, _jwtOptions with { LifetimeInMinutes = expiry });
+					var subject = "Confirm Your Email";
+					await emailSender.SendEmailAsync(user.Email, subject, emailBody);
 
-                    var SessionCookieOptions = new CookieOptions
-                    {
-                        HttpOnly = true,  // Can't be accessed via JS
-                        Secure = true,    // Ensures cookies are sent over HTTPS
-                        SameSite = SameSiteMode.None, // Prevents CSRF
-                        Path = "/",
-                        // Expires = DateTime.UtcNow.AddMinutes(expiry)  // Expiry time of refresh token
-                    };
 
+					return StatusCode(201, new
+					{
+						accessToken,
+						name = $"{user.FirstName} {user.LastName}",
+						id = user.Id,
+						email = user.Email,
+						role = role.Name!
+					});
 
-                    Response.Cookies.Append("refreshToken", refreshToken, SessionCookieOptions);
+				}
 
-                    var accessToken = await GenerateJwt(user, _jwtOptions);
+				List<IdentityError> errors = [];
 
+				foreach (var error in result.Errors)
+					errors.Add(error);
 
+				return BadRequest(new
+				{
+					errors
+				});
+			}
 
-                    return StatusCode(201, new
-                    {
-                        accessToken,
-                        name = $"{user.FirstName} {user.LastName}",
-                        id = user.Id,
-                        email = user.Email,
-                        role = role.Name!
-                    });
+			return BadRequest();
 
-                }
+		}
 
-                List<IdentityError> errors = [];
+		[HttpPost]
+		[Route("Refresh")]
+		public async Task<IActionResult> Refresh()
+		{
 
-                foreach (var error in result.Errors)
-                    errors.Add(error);
+			var refreshToken = Request.Cookies["refreshToken"];
+			if (string.IsNullOrEmpty(refreshToken))
+				return Unauthorized(new { message = "Refresh token not found" });
 
-                return BadRequest(new { errors });
-            }
+			var principal = ValidateRefreshToken(refreshToken, _jwtOptions, out bool expired);
 
-            return BadRequest();
+			if (expired is true)
+				return Unauthorized(new { message = "Refresh token expired" });
+			if (principal is null)
+				return Unauthorized(new { message = "Invalid refresh token" });
 
-        }
 
-        [HttpPost]
-        [Route("Refresh")]
-        public async Task<IActionResult> Refresh()
-        {
+			var userId = principal.FindFirst("id")?.Value;
+			if (userId is null)
+				return Unauthorized(new { message = "user was not found" });
+			var user = await _userManager.FindByIdAsync(userId);
+			if (user is null)
+				return Unauthorized(new { message = "user was not found" });
+			var accessToken = await GenerateJwt(user, _jwtOptions);
 
-            var refreshToken = Request.Cookies["refreshToken"];
-            if (string.IsNullOrEmpty(refreshToken))
-                return Unauthorized(new { message = "Refresh token not found" });
+			return Ok(new { accessToken });
+		}
 
-            var principal = ValidateRefreshToken(refreshToken, _jwtOptions, out bool expired);
+		[HttpPost]
+		[Route("Logout")]
+		public async Task<IActionResult> Logout()
 
-            if (expired is true)
-                return Unauthorized(new { message = "Refresh token expired" });
-            if (principal is null)
-                return Unauthorized(new { message = "Invalid refresh token" });
+		{
+			var refreshToken = Request.Cookies["refreshToken"];
+			if (string.IsNullOrEmpty(refreshToken))
+				return Conflict(new { message = "User is already logged Out" });
 
 
-            var userId = principal.FindFirst("id")?.Value;
-            if (userId is null)
-                return Unauthorized(new { message = "user was not found" });
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user is null)
-                return Unauthorized(new { message = "user was not found" });
-            var accessToken = await GenerateJwt(user, _jwtOptions);
+			await _signInManager.SignOutAsync();
+			Response.Cookies.Delete("refreshToken");
+			return Ok(new { message = "user logged out successfully" });
+		}
 
-            return Ok(new { accessToken });
-        }
 
-        [HttpPost]
-        [Route("Logout")]
-        public async Task<IActionResult> Logout()
+		[HttpPost]
+		[Route("ConfirmEmail")]
+		public async Task<IActionResult> EmailConfirmationAsync(ConfirmEmailDto confirmEmail)
+		{
+			var user = await _userManager.FindByEmailAsync(confirmEmail.Email);
+			if (user is null)
+			{
+				return Conflict(new { message = "Invalid Email" });
+			}
 
-        {
-            var refreshToken = Request.Cookies["refreshToken"];
-            if (string.IsNullOrEmpty(refreshToken))
-                return Conflict(new { message = "User is already logged Out" });
+			var checkcode = emailVerificationCode.CheckCode(user.Email, confirmEmail.Code);
+			if (!checkcode)
+				return Conflict(new { message = "Invalid Code" });
 
+			user.EmailConfirmed=true;
+			await _userManager.UpdateAsync(user);	
 
-            await _signInManager.SignOutAsync();
-            Response.Cookies.Delete("refreshToken");
-            return Ok(new { message = "user logged out successfully" });
-        }
-    }
+			return Ok("Email confirmed successfully. You can now log in.");
+			
+		}
+	}
 }
 

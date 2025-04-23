@@ -20,8 +20,4 @@
     <ProjectReference Include="..\Education.Infrastructure\Education.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="wwwroot\" />
-  </ItemGroup>
-
 </Project>

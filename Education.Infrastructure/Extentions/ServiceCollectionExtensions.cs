@@ -27,7 +27,8 @@ public static class ServiceCollectionExtensions
                 .AddEntityFrameworkStores<EducationPlatformDBContext>()
                  .AddSignInManager<SignInManager<ApplicationUser>>()
                 .AddUserManager<UserManager<ApplicationUser>>()
-                .AddRoleManager<RoleManager<IdentityRole>>();
+                .AddRoleManager<RoleManager<IdentityRole>>()
+                .AddDefaultTokenProviders();
 
 
         // no need to inject genric repos there's no dependency for them

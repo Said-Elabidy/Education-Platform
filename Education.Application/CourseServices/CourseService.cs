@@ -14,6 +14,7 @@ namespace Education.Application.CourseServices
 	public class CourseService : ICourseService
 	{
 		private readonly ICourseRepository courseRepository;
+		private readonly ICategoryRepository categoryRepository;
 		private readonly IImageService imageService;
 		private readonly string CourseFolderName = @"/Courses";
 		private readonly IWebHostEnvironment webHostEnvironment;
@@ -35,9 +36,9 @@ namespace Education.Application.CourseServices
 			{
 				//chech if categoryId is on category tables;
 
-			//	var category = await courseRepository.GetEntityAsync(e => e.CategoriesId == coursesDto.CategoriesId&&!e.IsDeleted);
-				//if (category is null)
-				//	new ApiResponse<CourseRespondDto>(404, $"Category Id :{coursesDto.CategoriesId}  Is Not Found");
+				var category = await categoryRepository.GetEntityAsync(e => e.CategorieId == coursesDto.CategoriesId && !e.IsDeleted);
+				if (category is null)
+					new ApiResponse<CourseRespondDto>(404, $"Category Id :{coursesDto.CategoriesId}  Is Not Found");
 
 				var imageResult = await imageService.UploadImage(coursesDto.CourseImage, CourseFolderName);
 				if (!imageResult.IsUploaded)
@@ -118,9 +119,9 @@ namespace Education.Application.CourseServices
 			try
 			{
 				string[] Includes = { "Categories" };
-				//var category = await courseRepository.GetEntityAsync(e => e.CategoriesId == coursesDto.CategoriesId&&!e.IsDeleted);
-				//if (category is null)
-					//new ApiResponse<CourseRespondDto>(404, $"Category Id :{coursesDto.CategoriesId}  Is Not Found");
+				var category = await categoryRepository.GetEntityAsync(e => e.CategorieId == coursesDto.CategoriesId && !e.IsDeleted);
+				if (category is null)
+					new ApiResponse<CourseRespondDto>(404, $"Category Id :{coursesDto.CategoriesId}  Is Not Found");
 
 				var course = await courseRepository.GetEntityAsync(e => e.CoursesId == coursesDto.CourseId && !e.IsDeleted, Includes, true);
 				if (course is null)
@@ -159,6 +160,7 @@ namespace Education.Application.CourseServices
 		}
 		private CourseRespondDto MapCourseToDTO(Courses courses)
 		{
+			var baseUri = uriService.GetBaseUri();
 			var CourseResponse = new CourseRespondDto()
 			{
 				CourseId = courses.CoursesId,
@@ -167,7 +169,7 @@ namespace Education.Application.CourseServices
 				Price = courses.Price,
 				Title = courses.Title,
 				Description = courses.Description,
-				CourseImage = $"{webHostEnvironment.WebRootPath}{CourseFolderName}{courses.CourseImage}",
+				CourseImage = $@"{baseUri}/Courses/{courses.CourseImage}",
 				CreateOn = courses.CreateOn,
 				DiscountPercentage = courses.DiscountPercentage,
 				LastUpdateOn = courses.LastUpdateOn,
@@ -175,7 +177,7 @@ namespace Education.Application.CourseServices
 				CourseStatus = courses.CourseStatus.ToString(),
 				IsFree = courses.IsFree,
 				Rating = courses.Rating,
-			};
+			};			
 			return CourseResponse;
 		}
 
