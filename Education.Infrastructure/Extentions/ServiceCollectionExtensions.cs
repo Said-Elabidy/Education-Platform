@@ -1,7 +1,6 @@
 ﻿
 using Education.Application.DTO_s.CourseDto_s;
 using Education.Application.DTO_s.FeedBackDTO_s;
-using Education.Application.DTO_s.PaymentDtos;
 using Education.Application.DTO_s.SectionDTO_s;
 using Education.Application.DTO_s.StudentCourse;
 using Education.Application.DTO_s.VideoProgressDto_s;
@@ -40,20 +39,19 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IQuestionRepository, QuestionRepository>();
       
-        services.AddScoped<ISectionRepository<SectionDto, GetSectionsWithIncloudQuiz_Video>, SectionRepository>();
+        services.AddScoped<ISectionRepository<SectionDto>, SectionRepository>();
       
         services.AddScoped<ICategoryRepository, CategoryRepository>();
 
         services.AddScoped<IQuizRepository,QuizRepository>();
       
-        services.AddScoped<ICourseRepository, CourseRepository>();
+        services.AddScoped<ICourseRepository<GetCourseDataDTO>, CourseRepository>();
         services.AddScoped<IFeedBackRepo<FeedBackDTO>, FeedBackRepository>();
         services.AddScoped<IStudentCourseRepository<StudentCourseDTO>, StudentCourseRepository>();
         services.AddScoped<IVideoProgressRepository<VideoProgressDtos>, VideoProgressRepository>();
 
         services.AddScoped<IUserQuizReository, UserQuizReository>();
         services.AddScoped<IVideoRepository, VideoRepository>();
-        services.AddScoped<IpaymentReposatory<PaymentDtos>, PaymentReposatory>();
 
 
     }

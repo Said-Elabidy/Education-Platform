@@ -5,7 +5,5 @@ namespace Education.Domain.Repository
     public interface ICategoryRepository : IGenericRepository<Categories>
     {
         Task<Categories?> GetNotDeletedCategoryById(int id);
-
-        Task<Categories?> GetCategoryCourseById(int courseId);
     }
 }

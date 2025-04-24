@@ -37,7 +37,7 @@ namespace EducationPlatform.Controllers
         //[Authorize(Roles = MyRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> AddCategory([FromForm] CreateCategoryDto categoryDto)
+        public async Task<ActionResult> AddCategory([FromBody] CreateCategoryDto categoryDto)
         {
             Categories category = new Categories
             {
@@ -71,17 +71,6 @@ namespace EducationPlatform.Controllers
             }
             return Ok(category);
         }
-
-        [HttpGet("course/{courseId:int}")]
-        public async Task<ActionResult<Categories>> GetCategoryByCourseId([FromRoute] int courseId)
-        {
-            var category = await _categoryServices.GetCategoryCourseById(courseId);
-            if (category == null)
-            {
-                return NotFound(new {message=$"There is No Category with this Course Id {courseId} "});
-            }
-            return Ok(category);
-        }
         // Delete Category
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -109,7 +98,7 @@ namespace EducationPlatform.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult> UpdateCategory([FromRoute] int id, [FromForm] UpdateCategoryDto categoryDto)
+        public async Task<ActionResult> UpdateCategory([FromRoute] int id, [FromBody] UpdateCategoryDto categoryDto)
         {
             var existingCategory = await _categoryServices.GetCategoryById(id);
             if (existingCategory == null)

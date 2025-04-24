@@ -23,27 +23,8 @@ namespace Education.Infrastructure.Repository
 
         public async Task<Quiz?> GetQuizIncludeQuestionsAsync(int Id)
         {
-            return await _context.quizzes
-            .Where(q => q.Id == Id)
-            .Select(q => new Quiz
-            {
-                Id = q.Id,
-                Title = q.Title,
-                Questions = q.Questions
-                .Select(q => new Question
-                {
-                    Id = q.Id,
-                    Header = q.Header,
-                    CorrectAnswer = q.CorrectAnswer,
-                    Order = q.Order,
-                    QuizId = q.QuizId,
-                    // Exclude Quiz to break the cycle 
-                }).ToList()
-            })
-            .AsNoTracking()
-            .FirstOrDefaultAsync();
+            return await _context.quizzes.Include(q =>q.Questions).AsNoTracking().FirstOrDefaultAsync(x => x.Id == Id);
         }
-       
         public async Task<Quiz?> GetQuizeBySectionId(int sectionId)
         {
             return await _dbSet.Include(q=>q.Questions).FirstOrDefaultAsync(q => q.SectionId == sectionId);

@@ -1,7 +1,7 @@
-﻿using Education.Application.DTO_s;
+﻿using Education.Application.CourseServices;
+using Education.Application.DTO_s;
 using Education.Application.DTO_s.CourseDto_s;
 using Education.Application.RequestModels;
-using Education.Application.Services.CourseServices;
 using Education.Domain.Roles;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -19,7 +19,7 @@ namespace EducationPlatform.Controllers
 			this.courseService = courseService;
 		}
 		[HttpPost("Add-Course")]
-       // [Authorize(Roles = MyRoles.Admin)]
+        [Authorize(Roles = MyRoles.Admin)]
         public async Task<ActionResult> AddCourseAsync([FromForm] CreateCourseDto courseDto)
 		{
 			if (!ModelState.IsValid)
@@ -70,40 +70,28 @@ namespace EducationPlatform.Controllers
 			return Ok(response);
 		}
 
-        [HttpGet("All-Courses")]
-        public async Task<ActionResult> GetAllCoursesAsync()
-        {
-            var route = Request.Path.Value;
-            var response = await courseService.GetAllCources();
-            if (response.StatusCode != 200)
-            {
-                return StatusCode(response.StatusCode, response);
-            }
-            return Ok(response);
-        }
-
-        [HttpPut("updateCourse/{courseId:int}")]
+		[HttpPut("updateCourse")]
         [Authorize(Roles = MyRoles.Admin)]
-        public async Task<ActionResult> UpdateCourse([FromRoute] int courseId,[FromForm] UpdateCourseDto updateCourseDto)
+        public async Task<ActionResult> UpdateCourse([FromForm] UpdateCourseDto updateCourseDto)
 		{
 			if (!ModelState.IsValid)
 				return BadRequest(ModelState);
 
-			var respond = await courseService.UpdateCourse(courseId,updateCourseDto);		
+			var respond = await courseService.UpdateCourse(updateCourseDto);		
 			if (respond.StatusCode != 200)
 				return StatusCode(respond.StatusCode, respond);
 
 			return Ok(respond);
 		}
 
-		[HttpPut("updateCourseAccess/{courseId:int}")]
+		[HttpPut("updateCourseAccess")]
         [Authorize(Roles = MyRoles.Admin)]
-        public async Task<ActionResult> UpdateCourse([FromRoute] int courseId ,[FromBody] ChangeAccessDto changeAccessDto)
+        public async Task<ActionResult> UpdateCourse([FromBody] ChangeAccessDto changeAccessDto)
 		{
 			if (!ModelState.IsValid)
 				return BadRequest(ModelState);
 
-			var respond = await courseService.ChangeCourseAccess(courseId,changeAccessDto);
+			var respond = await courseService.ChangeCourseAccess(changeAccessDto);
 			if (respond.StatusCode != 200)
 				return StatusCode(respond.StatusCode, respond);
 

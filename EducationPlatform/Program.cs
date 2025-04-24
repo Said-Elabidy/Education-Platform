@@ -33,7 +33,7 @@ namespace EducationPlatform
             // Invoke the static methods of Application Registeration and Infrastructure Registeration
 
             builder.Services.AddInfrastructure(builder.Configuration);
-            builder.Services.AddApplication(builder.Configuration);
+            builder.Services.AddApplication();
             builder.Services.AddPresentation(builder.Configuration);
              
 
