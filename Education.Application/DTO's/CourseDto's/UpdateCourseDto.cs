@@ -8,8 +8,8 @@ namespace Education.Application.DTO_s.CourseDto_s
 {
 	public class UpdateCourseDto
 	{
-		//[Required(ErrorMessage = Errors.RequiredFiled)]
-		//public int CourseId { get; set; }	
+		[Required(ErrorMessage = Errors.RequiredFiled)]
+		public int CourseId { get; set; }	
 
 		[Required(ErrorMessage = Errors.RequiredFiled)]
 		[MinLength(2, ErrorMessage = Errors.MinLength)]
@@ -37,8 +37,7 @@ namespace Education.Application.DTO_s.CourseDto_s
 		[Required(ErrorMessage = Errors.RequiredFiled)]
 		public bool IsSequentialWatch { get; set; }
 
-		//[Required(ErrorMessage = Errors.RequiredFiled)]
-		
-		public IFormFile? CourseImage { get; set; }
+		[Required(ErrorMessage = Errors.RequiredFiled)]
+		public IFormFile CourseImage { get; set; }
 	}
 }

@@ -9,7 +9,7 @@ using Education.Domain.Enum;
 using Education.Domain.Repository;
 using Microsoft.AspNetCore.Hosting;
 
-namespace Education.Application.Services.CourseServices
+namespace Education.Application.CourseServices
 {
 	public class CourseService : ICourseService
 	{

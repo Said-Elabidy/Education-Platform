@@ -1,5 +1,4 @@
-﻿using Education.Domain.Entities;
-using Education.Domain.Repository;
+﻿using Education.Domain.Repository;
 using Education.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -65,7 +64,7 @@ namespace Education.Infrastructure.Repository
             //_context.Remove(Id);
         }
 
-          public virtual async Task<IEnumerable<T>> GetAllEntitiesAsync(Expression<Func<T, bool>> Filter = null, string[] Includes = null, bool track = false, int pageNumber = 0, int pageSize = 0)
+          public async Task<IEnumerable<T>> GetAllEntitiesAsync(Expression<Func<T, bool>>? Filter = null, string[]? Includes = null, bool track = false, int pageNumber = 0, int pageSize = 0)
 		{
 			IQueryable<T> query = _dbSet.AsQueryable();
 
@@ -92,7 +91,7 @@ namespace Education.Infrastructure.Repository
 			return await query.ToListAsync();
 		}
           
-          public virtual async Task<T?> GetEntityAsync(Expression<Func<T, bool>> filter, string[] Includes = null, bool tracked = false)
+          public async Task<T?> GetEntityAsync(Expression<Func<T, bool>> filter, string[]? Includes = null, bool tracked = false)
 		{
 			IQueryable<T> query = _dbSet.AsQueryable();
 			if (tracked)
@@ -106,13 +105,12 @@ namespace Education.Infrastructure.Repository
 
 			return await query.SingleOrDefaultAsync(filter);
 		}
-       public virtual async Task<int> RecordCount()
+       public async Task<int> RecordCount()
 		{
 			return await _dbSet.CountAsync();	
 		}
-
-       
-    }
+          		
+	}
 }
 
 

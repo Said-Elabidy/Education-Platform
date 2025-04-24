@@ -3,7 +3,7 @@ using Education.Application.DTO_s.CourseDto_s;
 using Education.Application.RequestModels;
 using Education.Application.ResponseModels.CourseRespondDto;
 
-namespace Education.Application.Services.CourseServices
+namespace Education.Application.CourseServices
 {
 	public interface ICourseService
 	{
