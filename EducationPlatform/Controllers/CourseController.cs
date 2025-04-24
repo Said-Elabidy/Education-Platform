@@ -6,6 +6,7 @@ using Education.Domain.Roles;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace EducationPlatform.Controllers
 {
@@ -110,5 +111,13 @@ namespace EducationPlatform.Controllers
 			}
 			return Ok(response);
 		}
-	}
+
+        [HttpGet("{courseId}/duration")]
+        public async Task<ActionResult<string>> GetCourseDuration(int courseId)
+        {
+            var durations = await courseService.CourseDuration(courseId);
+
+            return Ok(durations);
+        }
+    }
 }

@@ -17,15 +17,23 @@ namespace Education.Application.Services.CourseServices
 		private readonly IImageService imageService;
 		private readonly string CourseFolderName = @"/Courses";
 		private readonly IWebHostEnvironment webHostEnvironment;
-		private readonly IUriService uriService;	
-		public CourseService(ICourseRepository<GetCourseDataDTO> courseRepository, IImageService imageService, IWebHostEnvironment webHostEnvironment
-			                , IUriService uriService)
+
+		private readonly IUriService uriService;
+        private readonly ICourseAndSectionDurationRepository _courseDurationRepository;
+
+        public CourseService(ICourseRepository  courseRepository, IImageService imageService, IWebHostEnvironment webHostEnvironment
+			                , IUriService uriService , ICourseAndSectionDurationRepository courseDurationRepository)
+
 		{ 
 			this.courseRepository = courseRepository;
 			this.imageService = imageService;
 			this.webHostEnvironment = webHostEnvironment;
-			this.uriService = uriService;	
-		}
+
+			this.uriService = uriService;
+            _courseDurationRepository = courseDurationRepository;
+        }
+
+
 		public async Task<ApiResponse<CourseRespondDto>> CreateCourse(CreateCourseDto coursesDto)
 		{
 			if (coursesDto == null)
@@ -273,5 +281,15 @@ namespace Education.Application.Services.CourseServices
 			}
 		}
 
-	} 
+
+		public async Task<string> CourseDuration (int courseId)
+		{
+            var duration = await _courseDurationRepository.GetCourseDuration(courseId);
+            if (duration is null)
+                return "00:00:00";
+            return duration;
+     }
+
+    } 
+
 }

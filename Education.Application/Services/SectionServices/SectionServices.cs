@@ -8,11 +8,15 @@ namespace Education.Application.Services.SectionServices
 {
     public class SectionServices : ISectionServices
     {
-        private readonly ISectionRepository<SectionDto> _sectionRepo;
 
-        public SectionServices(ISectionRepository<SectionDto> sectionRepo)
+        private readonly ISectionRepository<SectionDto> _sectionRepo;
+        private readonly ICourseAndSectionDurationRepository _sectionDurationRepository;
+
+        public SectionServices(ISectionRepository<SectionDto> sectionRepo, ICourseAndSectionDurationRepository sectionDurationRepository)
+
         {
             _sectionRepo = sectionRepo;
+            _sectionDurationRepository = sectionDurationRepository;
         }
         public async Task Add(CreateSectionDto sectionDto)
         {
@@ -107,6 +111,14 @@ namespace Education.Application.Services.SectionServices
                 return true;
             }
             return false;
+        }
+
+        public async Task<string> GetSectionDuration(int SectionId)
+        {
+            var duration = await _sectionDurationRepository.GetSectionDuration(SectionId);
+            if (duration is null)
+                return "00:00:00";
+            return duration;
         }
     }
 }

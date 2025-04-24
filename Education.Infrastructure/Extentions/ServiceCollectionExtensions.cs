@@ -53,6 +53,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUserQuizReository, UserQuizReository>();
         services.AddScoped<IVideoRepository, VideoRepository>();
 
+        services.AddScoped<IpaymentReposatory<PaymentDtos>, PaymentReposatory>();
+        services.AddScoped<ICourseAndSectionDurationRepository, CourseAndSectionDurationRepository>();
+
 
     }
 }
