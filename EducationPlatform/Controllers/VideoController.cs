@@ -23,7 +23,7 @@ namespace EducationPlatform.Controllers
         }
 
         [HttpPost]
-      //  [Authorize(Roles = MyRoles.Admin)]
+        [Authorize(Roles = MyRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Consumes("multipart/form-data")]

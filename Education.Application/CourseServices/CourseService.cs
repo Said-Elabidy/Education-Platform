@@ -9,7 +9,7 @@ using Education.Domain.Enum;
 using Education.Domain.Repository;
 using Microsoft.AspNetCore.Hosting;
 
-namespace Education.Application.Services.CourseServices
+namespace Education.Application.CourseServices
 {
 	public class CourseService : ICourseService
 	{
@@ -17,23 +17,15 @@ namespace Education.Application.Services.CourseServices
 		private readonly IImageService imageService;
 		private readonly string CourseFolderName = @"/Courses";
 		private readonly IWebHostEnvironment webHostEnvironment;
-
-		private readonly IUriService uriService;
-        private readonly ICourseAndSectionDurationRepository _courseDurationRepository;
-
-        public CourseService(ICourseRepository  courseRepository, IImageService imageService, IWebHostEnvironment webHostEnvironment
-			                , IUriService uriService , ICourseAndSectionDurationRepository courseDurationRepository)
-
+		private readonly IUriService uriService;	
+		public CourseService(ICourseRepository<GetCourseDataDTO> courseRepository, IImageService imageService, IWebHostEnvironment webHostEnvironment
+			                , IUriService uriService)
 		{ 
 			this.courseRepository = courseRepository;
 			this.imageService = imageService;
 			this.webHostEnvironment = webHostEnvironment;
-
-			this.uriService = uriService;
-            _courseDurationRepository = courseDurationRepository;
-        }
-
-
+			this.uriService = uriService;	
+		}
 		public async Task<ApiResponse<CourseRespondDto>> CreateCourse(CreateCourseDto coursesDto)
 		{
 			if (coursesDto == null)
@@ -281,15 +273,5 @@ namespace Education.Application.Services.CourseServices
 			}
 		}
 
-
-		public async Task<string> CourseDuration (int courseId)
-		{
-            var duration = await _courseDurationRepository.GetCourseDuration(courseId);
-            if (duration is null)
-                return "00:00:00";
-            return duration;
-     }
-
-    } 
-
+	} 
 }

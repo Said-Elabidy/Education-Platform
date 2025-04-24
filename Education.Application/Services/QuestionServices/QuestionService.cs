@@ -1,5 +1,4 @@
 ﻿using Education.Application.DTO_s;
-using Education.Application.DTO_s.QuestionDto_s;
 using Education.Domain.Entities;
 using Education.Domain.Repository;
 
@@ -39,31 +38,9 @@ namespace Education.Application.Services.QuestionServices
           
         }
 
-        public async Task<QuestionsDTO?> GetQuestionDtoById(int id)
-        {
-            var question = await _questionRepository.GetByIdAsync(id);
-
-            if (question == null) return null;
-
-            // Map the question entity to the DTO
-            var qustionDto = new QuestionsDTO
-            {
-                Id = question.Id,
-                Header = question.Header,
-                Order = question.Order,
-                CorrectAnswer = question.CorrectAnswer,
-                QuizId = question.QuizId
-            };
-
-            return qustionDto;
-        }
-
         public async Task<Question?> GetQuestionById(int id)
         {
             var question = await _questionRepository.GetByIdAsync(id);
-
-            if (question == null) return null;
-
 
             return question;
         }

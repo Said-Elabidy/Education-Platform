@@ -1,5 +1,4 @@
 ﻿using Education.Application.DTO_s;
-using Education.Application.DTO_s.QuestionDto_s;
 using Education.Application.Services.QuestionServices;
 using Education.Domain.Entities;
 using Education.Domain.Roles;
@@ -18,15 +17,13 @@ namespace EducationPlatform.Controllers
 
         // get All Questions
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<Question>>> GetAllQuestions()
         {
             var questions =await _questionService.GetQuestions();
 
-            if (!questions.Any())
+            if (questions == null)
             {
-                return NotFound("No Question Found");
+                return NotFound();
             }
 
             return Ok(questions);
@@ -34,14 +31,16 @@ namespace EducationPlatform.Controllers
 
         // get All Question By It's Id
 
+
         [HttpGet("{id}")]
-        public async Task<ActionResult<QuestionsDTO>> GetQuestionById([FromRoute] int id)
+        public async Task<ActionResult<Question>> GetQuestionById([FromRoute] int id)
+
         {
-            var question = await _questionService.GetQuestionDtoById(id);
+            var question = await _questionService.GetQuestionById(id);
 
             if (question == null)
             {
-                return NotFound($"No Question Found with Id : {id}");
+                return NotFound();
             }
 
             return Ok(question);
@@ -53,7 +52,7 @@ namespace EducationPlatform.Controllers
         [Authorize(Roles = MyRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> AddQuestion([FromForm] CreateQuestionDto questionDto)
+        public async Task<ActionResult> AddQuestion([FromBody] CreateQuestionDto questionDto)
         {
            if(questionDto == null) { return BadRequest(); } 
 
@@ -85,7 +84,7 @@ namespace EducationPlatform.Controllers
 
         [HttpPut("{Id}")]
         [Authorize(Roles = MyRoles.Admin)]
-        public async Task<ActionResult> UpdateQuestion([FromRoute] int Id,[FromForm] UpdateQuestionDto updateQuestionDto)
+        public async Task<ActionResult> UpdateQuestion([FromRoute]int Id,UpdateQuestionDto updateQuestionDto)
         {
             var isUpdated =await _questionService.Update(Id, updateQuestionDto);
 

@@ -40,28 +40,6 @@ namespace EducationPlatform.Controllers
                 });
             }
         }
-        [HttpGet("IncloudedVedio&Quiz-byCourse/{courseId:int}")]
-        public async Task<IActionResult> GetSectionsWithIncloudInCourse(int courseId)
-        {
-            try
-            {
-                var sections = await _sectionServices.GetSectionsByCourseIdWithIncloudQuiz_Video(courseId);
-                if (sections == null || !sections.Any())
-                {
-                    return NotFound(new { Message = $"No sections found for CourseId = {courseId}" });
-                }
-
-                return Ok(sections);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new
-                {
-                    Message = "An error occurred while retrieving sections.",
-                    Details = ex.Message
-                });
-            }
-        }
         [HttpGet("{Id:int}")]
         public async Task<IActionResult> GetSectionById(int Id)
         {
@@ -87,7 +65,7 @@ namespace EducationPlatform.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateSection([FromForm]CreateSectionDto sectionDto)
+        public async Task<IActionResult> CreateSection(CreateSectionDto sectionDto)
         {
             try
             {
@@ -102,7 +80,7 @@ namespace EducationPlatform.Controllers
         [HttpPut("{Id:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> UpdateSection(int Id,[FromForm] UpdateSectionDto updateSection)
+        public async Task<IActionResult> UpdateSection(int Id, UpdateSectionDto updateSection)
         {
            bool IsUpdated= await _sectionServices.Update(Id, updateSection);
             if (IsUpdated)
