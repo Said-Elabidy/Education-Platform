@@ -88,12 +88,12 @@ namespace EducationPlatform.Controllers
             return NotFound(new { Massage = $"No Sections found for This Id = {Id}" });
         }
 
-        [HttpGet("{sectionId}/duration")]
-        public async Task<ActionResult<string>> GetSectionDuration(int sectionId)
-        {
-            var durations = await _sectionServices.GetSectionDuration(sectionId);
+        //[HttpGet("{sectionId}/duration")]
+        //public async Task<ActionResult<string>> GetSectionDuration(int sectionId)
+        //{
+        //    var durations = await _sectionServices.GetSectionDuration(sectionId);
 
-            return Ok(durations);
-        }
+        //    return Ok(durations);
+        //}
     }
 }

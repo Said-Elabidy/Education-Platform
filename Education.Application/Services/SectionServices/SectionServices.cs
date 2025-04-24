@@ -8,15 +8,11 @@ namespace Education.Application.Services.SectionServices
 {
     public class SectionServices : ISectionServices
     {
+        private readonly ISectionRepository<SectionDto, GetSectionsWithIncloudQuiz_Video> _sectionRepo;
 
-        private readonly ISectionRepository<SectionDto> _sectionRepo;
-        private readonly ICourseAndSectionDurationRepository _sectionDurationRepository;
-
-        public SectionServices(ISectionRepository<SectionDto> sectionRepo, ICourseAndSectionDurationRepository sectionDurationRepository)
-
+        public SectionServices(ISectionRepository<SectionDto, GetSectionsWithIncloudQuiz_Video> sectionRepo)
         {
             _sectionRepo = sectionRepo;
-            _sectionDurationRepository = sectionDurationRepository;
         }
         public async Task Add(CreateSectionDto sectionDto)
         {
@@ -26,7 +22,7 @@ namespace Education.Application.Services.SectionServices
                 //Videos = sectionDto.Videos,
                 CourseId = sectionDto.CourseId,
                 //Quiz = sectionDto.Quiz,
-                IsPassSection=sectionDto.IsPassSection
+                IsPassSection = sectionDto.IsPassSection
             };
             await _sectionRepo.AddAsync(section);
             await _sectionRepo.SaveChangesAsync();
@@ -58,8 +54,8 @@ namespace Education.Application.Services.SectionServices
                     IsPassSection = section.IsPassSection,
                     //CourseId = section.CourseId,
                     //Courses = section.Courses,
-                    Videos = section.Videos,
-                    Quiz = new GetQuizeDTO { Id = section.Quiz.Id, NumOfQuestion = section.Quiz.NumOfQuestion, PassingScore = section.Quiz.PassingScore, SectionId = section.Quiz.SectionId, Title = section.Quiz.Title }
+                    //Videos = section.Videos,
+                    //Quiz = new GetQuizeDTO { Id = section.Quiz.Id, NumOfQuestion = section.Quiz.NumOfQuestion, PassingScore = section.Quiz.PassingScore, SectionId = section.Quiz.SectionId, Title = section.Quiz.Title }
                 };
 
                 return sectionDto;
@@ -69,7 +65,7 @@ namespace Education.Application.Services.SectionServices
 
         public async Task<IEnumerable<SectionDto>> GetSections()
         {
-            var sections =await _sectionRepo.GetAllAsync();
+            var sections = await _sectionRepo.GetAllAsync();
             var sectionDto = sections.Select(s => new SectionDto()
             {
                 SectionId = s.SectionId,
@@ -77,7 +73,7 @@ namespace Education.Application.Services.SectionServices
                 //CourseId = s.CourseId,
                 //Courses = s.Courses,
                 IsPassSection = s.IsPassSection,
-                Quiz = new GetQuizeDTO { Id = s.Quiz.Id, NumOfQuestion = s.Quiz.NumOfQuestion, PassingScore = s.Quiz.PassingScore, SectionId = s.Quiz.SectionId, Title = s.Quiz.Title },
+                //Quiz = new GetQuizeDTO { Id = s.Quiz.Id, NumOfQuestion = s.Quiz.NumOfQuestion, PassingScore = s.Quiz.PassingScore, SectionId = s.Quiz.SectionId, Title = s.Quiz.Title },
                 //Videos = s.Videos
             }).ToList();
             return sectionDto;
@@ -92,8 +88,25 @@ namespace Education.Application.Services.SectionServices
                 SectionName = s.SectionName,
                 //CourseId = s.CourseId,
                 //Courses = s.Courses,
+                VideosNum = s.VideosNum,
                 IsPassSection = s.IsPassSection,
-                Quiz = new GetQuizeDTO { Id = s.Quiz.Id, NumOfQuestion = s.Quiz.NumOfQuestion, PassingScore = s.Quiz.PassingScore, SectionId = s.Quiz.SectionId, Title = s.Quiz.Title, Questions=s.Quiz.Questions },
+                //Quiz = new GetQuizeDTO { Id = s.Quiz.Id, NumOfQuestion = s.Quiz.NumOfQuestion, PassingScore = s.Quiz.PassingScore, SectionId = s.Quiz.SectionId, Title = s.Quiz.Title, Questions=s.Quiz.Questions },
+
+                //Videos = s.Videos
+            }).ToList();
+            return sectionDto;
+        }
+        public async Task<IEnumerable<GetSectionsWithIncloudQuiz_Video>> GetSectionsByCourseIdWithIncloudQuiz_Video(int courseId)
+        {
+            var sections = await _sectionRepo.getAllByCourseIdWithInclouds(courseId);
+            var sectionDto = sections.Select(s => new GetSectionsWithIncloudQuiz_Video()
+            {
+                SectionId = s.SectionId,
+                SectionName = s.SectionName,
+                //CourseId = s.CourseId,
+                //Courses = s.Courses,
+                IsPassSection = s.IsPassSection,
+                Quiz = new GetQuizWithIcloudQuestions { Id = s.Quiz.Id, NumOfQuestion = s.Quiz.NumOfQuestion, PassingScore = s.Quiz.PassingScore, SectionId = s.Quiz.SectionId, Title = s.Quiz.Title, Questions = s.Quiz.Questions },
 
                 Videos = s.Videos
             }).ToList();
@@ -103,22 +116,17 @@ namespace Education.Application.Services.SectionServices
         public async Task<bool> Update(int sectionId, UpdateSectionDto sectionDto)
         {
             var section = await _sectionRepo.GetByIdAsync(sectionId);
-            if (section != null) { 
-                section.Quiz = sectionDto.Quiz;
-                section.SectionName = sectionDto.SectionName;
+            if (section != null)
+            {
+                if (sectionDto.SectionName != null)
+                {
+                    section.SectionName = sectionDto.SectionName;
+                }
                 section.IsPassSection = sectionDto.IsPassSection;
                 await _sectionRepo.SaveChangesAsync();
                 return true;
             }
             return false;
-        }
-
-        public async Task<string> GetSectionDuration(int SectionId)
-        {
-            var duration = await _sectionDurationRepository.GetSectionDuration(SectionId);
-            if (duration is null)
-                return "00:00:00";
-            return duration;
         }
     }
 }

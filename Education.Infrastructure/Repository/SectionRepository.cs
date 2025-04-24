@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Education.Infrastructure.Repository
 {
-    public class SectionRepository : GenericRepository<Section>, ISectionRepository<SectionDto>
+    public class SectionRepository : GenericRepository<Section>, ISectionRepository<SectionDto, GetSectionsWithIncloudQuiz_Video>
     {
         // no need to have a private context member cause it's already inherted
 
@@ -36,42 +36,64 @@ namespace Education.Infrastructure.Repository
                 {
                     SectionId = s.SectionId,
                     IsPassSection = s.IsPassSection,
-                    Quiz = new GetQuizeDTO { Id = s.Quiz.Id, NumOfQuestion = s.Quiz.NumOfQuestion, PassingScore = s.Quiz.PassingScore, SectionId = s.Quiz.SectionId, Title = s.Quiz.Title },
+                    //Quiz = new GetQuizeDTO { Id = s.Quiz.Id, NumOfQuestion = s.Quiz.NumOfQuestion, PassingScore = s.Quiz.PassingScore, SectionId = s.Quiz.SectionId, Title = s.Quiz.Title },
                     SectionName = s.SectionName,
                     VideosNum = s.Videos.Count,
-                    Videos = s.Videos.Select(v => new GetVideosBySectionIdDto { Description = v.Description, IsFree = v.IsFree, SectionId = v.SectionId, Title = v.Title, VideoFileUrl = v.VideoFileUrl, VideoDuration = v.VideoDuration, VideoId = v.VideoId, VideoImageUrl = v.VideoImageUrl }).ToList()
+                    //Videos = s.Videos.Select(v => new GetVideosBySectionIdDto { Description = v.Description, IsFree = v.IsFree, SectionId = v.SectionId, Title = v.Title, VideoFileUrl = v.VideoFileUrl, VideoDuration = v.VideoDuration, VideoId = v.VideoId, VideoImageUrl = v.VideoImageUrl }).ToList()
                 };
             return null;
         }
 
         public async Task<IEnumerable<SectionDto>> getAllByCourseId(int courseId)
         {
-            return await _dbSet.Include(s=>s.Quiz).Include(s=>s.Videos).Where(s => s.CourseId == courseId).
-                Select(s => new SectionDto() {
+            return await _dbSet.Include(s => s.Videos).Where(s => s.CourseId == courseId).
+                Select(s => new SectionDto()
+                {
                     SectionId = s.SectionId,
-                    IsPassSection = s.IsPassSection, 
-                Quiz = new GetQuizeDTO { Id=s.Quiz.Id,
-                    NumOfQuestion=s.Quiz.NumOfQuestion,
-                    PassingScore=s.Quiz.PassingScore, 
-                    SectionId=s.Quiz.SectionId,
-                    Title=s.Quiz.Title,
-                    Questions=s.Quiz.Questions.Select(q=>new QuestionsDTO 
-                    { QuizId=q.QuizId,
-                        Order=q.Order,
-                        Id=q.Id, 
-                        CorrectAnswer=q.CorrectAnswer, 
-                        Header= q.Header}).ToList() 
-                    }, SectionName = s.SectionName,
+                    IsPassSection = s.IsPassSection,
+                    SectionName = s.SectionName,
+
+                    VideosNum = s.Videos.Count
+                }).ToListAsync();
+        }
+
+        public async Task<IEnumerable<GetSectionsWithIncloudQuiz_Video>> getAllByCourseIdWithInclouds(int courseId)
+        {
+            return await _dbSet.Include(s => s.Quiz).Include(s => s.Videos).Where(s => s.CourseId == courseId).
+                Select(s => new GetSectionsWithIncloudQuiz_Video()
+                {
+                    SectionId = s.SectionId,
+                    IsPassSection = s.IsPassSection,
+                    Quiz = new GetQuizWithIcloudQuestions
+                    {
+                        Id = s.Quiz.Id,
+                        NumOfQuestion = s.Quiz.NumOfQuestion,
+                        PassingScore = s.Quiz.PassingScore,
+                        SectionId = s.Quiz.SectionId,
+                        Title = s.Quiz.Title,
+                        Questions = s.Quiz.Questions.Select(q => new QuestionsDTO
+                        {
+                            QuizId = q.QuizId,
+                            Order = q.Order,
+                            Id = q.Id,
+                            CorrectAnswer = q.CorrectAnswer,
+                            Header = q.Header
+                        }).ToList()
+                    },
+                    SectionName = s.SectionName,
                     Videos = s.Videos.Select(v => new GetVideosBySectionIdDto
-                    { Description = v.Description, 
+                    {
+                        Description = v.Description,
                         IsFree = v.IsFree,
                         SectionId = v.SectionId,
-                        Title = v.Title, 
+                        Title = v.Title,
                         VideoFileUrl = v.VideoFileUrl,
-                        VideoDuration = v.VideoDuration, 
-                        VideoId = v.VideoId, 
-                        VideoImageUrl = v.VideoImageUrl }).ToList(),
-                    VideosNum = s.Videos.Count }).ToListAsync();
+                        VideoDuration = v.VideoDuration,
+                        VideoId = v.VideoId,
+                        VideoImageUrl = v.VideoImageUrl
+                    }).ToList(),
+                    VideosNum = s.Videos.Count
+                }).ToListAsync();
         }
 
     }
