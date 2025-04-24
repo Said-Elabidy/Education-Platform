@@ -9,10 +9,13 @@ namespace Education.Application.Services.SectionServices
     public class SectionServices : ISectionServices
     {
         private readonly ISectionRepository<SectionDto,GetSectionsWithIncloudQuiz_Video> _sectionRepo;
+        private readonly ICourseAndSectionDurationRepository _sectionDurationRepository;
 
-        public SectionServices(ISectionRepository<SectionDto, GetSectionsWithIncloudQuiz_Video> sectionRepo)
+        public SectionServices(ISectionRepository<SectionDto, GetSectionsWithIncloudQuiz_Video> sectionRepo
+            , ICourseAndSectionDurationRepository sectionDurationRepository)
         {
             _sectionRepo = sectionRepo;
+            _sectionDurationRepository = sectionDurationRepository;
         }
         public async Task Add(CreateSectionDto sectionDto)
         {
@@ -126,6 +129,14 @@ namespace Education.Application.Services.SectionServices
                 return true;
             }
             return false;
+        }
+
+        public async Task<string> GetSectionDuration(int SectionId)
+        {
+            var duration = await _sectionDurationRepository.GetSectionDuration(SectionId);
+            if (duration is null)
+                return "00:00:00";
+            return duration;
         }
     }
 }

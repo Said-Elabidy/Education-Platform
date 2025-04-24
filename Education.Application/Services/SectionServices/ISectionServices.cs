@@ -17,5 +17,7 @@ namespace Education.Application.Services.SectionServices
         Task Add(CreateSectionDto section);
         Task<IEnumerable<GetSectionsWithIncloudQuiz_Video>> GetSectionsByCourseIdWithIncloudQuiz_Video(int courseId);
 
+        Task<string> GetSectionDuration(int SectionId);
+
     }
 }

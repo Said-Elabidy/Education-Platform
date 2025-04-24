@@ -3,6 +3,7 @@ using Education.Application.Services.SectionServices;
 using Education.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using static System.Collections.Specialized.BitVector32;
 
 namespace EducationPlatform.Controllers
@@ -107,6 +108,14 @@ namespace EducationPlatform.Controllers
             if (IsUpdated)
                 return NoContent();
             return NotFound(new { Massage = $"No Sections found for This Id = {Id}" });
+        }
+
+        [HttpGet("{sectionId}/duration")]
+        public async Task<ActionResult<string>> GetSectionDuration(int sectionId)
+        {
+            var durations = await _sectionServices.GetSectionDuration(sectionId);
+
+            return Ok(durations);
         }
     }
 }
