@@ -3,6 +3,7 @@ using Education.Application.Services.SectionServices;
 using Education.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using static System.Collections.Specialized.BitVector32;
 
 namespace EducationPlatform.Controllers
@@ -23,28 +24,6 @@ namespace EducationPlatform.Controllers
             try
             {
                 var sections = await _sectionServices.GetSectionsByCourseId(courseId);
-                if (sections == null || !sections.Any())
-                {
-                    return NotFound(new { Message = $"No sections found for CourseId = {courseId}" });
-                }
-
-                return Ok(sections);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new
-                {
-                    Message = "An error occurred while retrieving sections.",
-                    Details = ex.Message
-                });
-            }
-        }
-        [HttpGet("IncloudedVedio&Quiz-byCourse/{courseId:int}")]
-        public async Task<IActionResult> GetSectionsWithIncloudInCourse(int courseId)
-        {
-            try
-            {
-                var sections = await _sectionServices.GetSectionsByCourseIdWithIncloudQuiz_Video(courseId);
                 if (sections == null || !sections.Any())
                 {
                     return NotFound(new { Message = $"No sections found for CourseId = {courseId}" });
@@ -87,6 +66,7 @@ namespace EducationPlatform.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateSection([FromBody]CreateSectionDto sectionDto)
+
         {
             try
             {
@@ -101,12 +81,22 @@ namespace EducationPlatform.Controllers
         [HttpPut("{Id:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+
         public async Task<IActionResult> UpdateSection([FromRoute]int Id,[FromBody] UpdateSectionDto updateSection)
+
         {
            bool IsUpdated= await _sectionServices.Update(Id, updateSection);
             if (IsUpdated)
                 return Ok("section was updated succesfully");
             return NotFound(new { Massage = $"No Sections found for This Id = {Id}" });
         }
+
+        //[HttpGet("{sectionId}/duration")]
+        //public async Task<ActionResult<string>> GetSectionDuration(int sectionId)
+        //{
+        //    var durations = await _sectionServices.GetSectionDuration(sectionId);
+
+        //    return Ok(durations);
+        //}
     }
 }

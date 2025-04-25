@@ -39,7 +39,9 @@ namespace EducationPlatform.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+
         public async Task<ActionResult<Quiz>> AddQuiz([FromBody]AddQuizDto addQuizDto)
+
         {
             try
             {
@@ -89,7 +91,9 @@ namespace EducationPlatform.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+
         public async Task<IActionResult> UpdateQuiz([FromRoute]int id,[FromBody] UpdateQuizDto updateQuizDto)
+
         {
             var isUpdated = await _quizService.Update(id, updateQuizDto);
 

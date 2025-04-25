@@ -7,18 +7,19 @@ using System.Linq.Expressions;
 
 namespace Education.Infrastructure.Repository
 {
-	// i marked generic repo as abstract cause it's not gonna be injected , it's used as a template
-        public abstract class  GenericRepository<T> : IGenericRepository<T> where T : class
-        {
-            protected readonly EducationPlatformDBContext _context;
-            protected readonly DbSet<T> _dbSet;
+    // i marked generic repo as abstract cause it's not gonna be injected , it's used as a template
+    public abstract class GenericRepository<T> : IGenericRepository<T> where T : class
+    {
+        protected readonly EducationPlatformDBContext _context;
+        protected readonly DbSet<T> _dbSet;
 
-            public GenericRepository(EducationPlatformDBContext context)
-            {
-                _context = context;
-                _dbSet = context.Set<T>();
-            }
- 
+        public GenericRepository(EducationPlatformDBContext context)
+        {
+            _context = context;
+            _dbSet = context.Set<T>();
+        }
+
+
 
 		public virtual async Task<T?> GetByIdAsync(int id)
 		{
@@ -39,14 +40,21 @@ namespace Education.Infrastructure.Repository
 		{
 			_dbSet.Update(entity);
 
-		}
+        }
 
 		public virtual void Delete(T entity)
 		{
 
-			_dbSet.Remove(entity);
 
-		}
+            _dbSet.Remove(entity);
+
+        }
+
+        public async Task<bool> SaveChangesAsync()
+        {
+            return await _context.SaveChangesAsync() > 0;
+        }
+
 
 		public virtual async Task<bool> SaveChangesAsync()
 		{
@@ -54,64 +62,65 @@ namespace Education.Infrastructure.Repository
 		}
           
           public virtual async Task<bool> Delete(int Id)
+
         {
             var entity = await _dbSet.FindAsync(Id);
             if (entity != null)
             {
                 _dbSet.Remove(entity);
-				return true;
+                return true;
             }
-			return false;
+            return false;
             //_context.Remove(Id);
         }
 
-          public virtual async Task<IEnumerable<T>> GetAllEntitiesAsync(Expression<Func<T, bool>> Filter = null, string[] Includes = null, bool track = false, int pageNumber = 0, int pageSize = 0)
-		{
-			IQueryable<T> query = _dbSet.AsQueryable();
+        public virtual async Task<IEnumerable<T>> GetAllEntitiesAsync(Expression<Func<T, bool>> Filter = null, string[] Includes = null, bool track = false, int pageNumber = 0, int pageSize = 0)
+        {
+            IQueryable<T> query = _dbSet.AsQueryable();
 
-			if (track)
-			{
-				query = query.AsNoTracking();
-			}
-			if (Includes != null)
-			{
-				foreach (var Include in Includes)
-					query = query.Include(Include);
-			}
+            if (track)
+            {
+                query = query.AsNoTracking();
+            }
+            if (Includes != null)
+            {
+                foreach (var Include in Includes)
+                    query = query.Include(Include);
+            }
 
-			if (Filter != null)
-			{
-				query = query.Where(Filter);
-			}
-			if(pageNumber != 0&&pageSize != 0)
-			{
+            if (Filter != null)
+            {
+                query = query.Where(Filter);
+            }
+            if (pageNumber != 0 && pageSize != 0)
+            {
 
-				query=query.Skip((pageNumber - 1) * pageSize).Take(pageSize);	
-									
-			}
-			return await query.ToListAsync();
-		}
-          
-          public virtual async Task<T?> GetEntityAsync(Expression<Func<T, bool>> filter, string[] Includes = null, bool tracked = false)
-		{
-			IQueryable<T> query = _dbSet.AsQueryable();
-			if (tracked)
-				query = query.AsNoTracking();
+                query = query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
 
-			if (Includes != null)
-			{
-				foreach (var Include in Includes)
-					query = query.Include(Include);
-			}
+            }
+            return await query.ToListAsync();
+        }
 
-			return await query.SingleOrDefaultAsync(filter);
-		}
-       public virtual async Task<int> RecordCount()
-		{
-			return await _dbSet.CountAsync();	
-		}
+        public virtual async Task<T?> GetEntityAsync(Expression<Func<T, bool>> filter, string[] Includes = null, bool tracked = false)
+        {
+            IQueryable<T> query = _dbSet.AsQueryable();
+            if (tracked)
+                query = query.AsNoTracking();
 
-       
+            if (Includes != null)
+            {
+                foreach (var Include in Includes)
+                    query = query.Include(Include);
+            }
+
+            return await query.SingleOrDefaultAsync(filter);
+        }
+        public virtual async Task<int> RecordCount()
+        {
+            return await _dbSet.CountAsync();
+        }
+
+
     }
 }
 

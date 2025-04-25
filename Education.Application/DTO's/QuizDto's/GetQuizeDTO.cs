@@ -19,7 +19,7 @@ namespace Education.Application.DTO_s.QuizDto_s
         public int SectionId { get; set; }
 
         public int? NumOfQuestion { get; set; }
-        //public List<QuestionsDTO> Questions { get; set; } = new List<QuestionsDTO>();
+        public List<QuestionsDTO> Questions { get; set; } = new List<QuestionsDTO>();
 
     }
 }

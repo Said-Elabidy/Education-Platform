@@ -57,21 +57,6 @@ namespace Education.Application.Services.QuizServices
                     PassingScore = quize.PassingScore,
                     SectionId = quize.SectionId,
                     Title = quize.Title,
-                    //Questions = quize.Questions.Select(q => new QuestionsDTO { CorrectAnswer = q.CorrectAnswer, Header = q.Header, Id = q.Id, Order = q.Order, QuizId = q.QuizId }).ToList()
-                };
-            return null;
-        } 
-        public async Task<GetQuizWithIcloudQuestions?> GetQuieBySectionIdIncloudedQuestions(int sectionId)
-        {
-            var quize = await _quizRepository.GetQuizeBySectionId(sectionId);
-            if (quize != null)
-                return new GetQuizWithIcloudQuestions
-                {
-                    Id = quize.Id,
-                    NumOfQuestion = quize.NumOfQuestion,
-                    PassingScore = quize.PassingScore,
-                    SectionId = quize.SectionId,
-                    Title = quize.Title,
                     Questions = quize.Questions.Select(q => new QuestionsDTO { CorrectAnswer = q.CorrectAnswer, Header = q.Header, Id = q.Id, Order = q.Order, QuizId = q.QuizId }).ToList()
                 };
             return null;

@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Education.Domain.Repository
 {
-	public interface ICourseRepository: IGenericRepository<Courses>
-	{
-		Task<IEnumerable<Courses>> GetAllCourses();
-		Task<Courses?> GetCourseById(int Id);
-	}
+    public interface ICourseRepository : IGenericRepository<Courses>
+    {
+        Task<IEnumerable<Courses>> GetAllCourses();
+        Task<Courses?> GetCourseById(int Id);
+    }
 }

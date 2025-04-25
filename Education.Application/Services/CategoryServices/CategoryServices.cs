@@ -99,16 +99,6 @@ namespace Education.Application.Services.CategoryServices
             var result = Categories.Where(c => c.Name.Contains(name));
             return result;
         }
-
-        public async Task<Categories?> GetCategoryCourseById(int courseId)
-        {
-            var category = await _categoryRepository.GetCategoryCourseById(courseId);
-            //if (category == null)
-            //{
-            //    throw new KeyNotFoundException($"Category In This Course ID {courseId} not found.");
-            //}
-            return category;
-        }
     }
     
 }

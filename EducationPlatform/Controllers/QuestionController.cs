@@ -83,8 +83,10 @@ namespace EducationPlatform.Controllers
         // Update Question
 
         [HttpPut("{Id}")]
+
       //  [Authorize(Roles = MyRoles.Admin)]
         public async Task<ActionResult> UpdateQuestion([FromRoute] int Id,[FromBody] UpdateQuestionDto updateQuestionDto)
+
         {
             var isUpdated =await _questionService.Update(Id, updateQuestionDto);
 

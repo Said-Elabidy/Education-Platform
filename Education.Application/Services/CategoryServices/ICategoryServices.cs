@@ -9,8 +9,6 @@ namespace Education.Application.Services.CategoryServices
 
         Task<Categories?> GetCategoryById(int id);
 
-        Task<Categories?> GetCategoryCourseById(int courseId);
-
         Task<bool> Update(Categories Category);
         public Task<bool> Update(int id, Categories Category);
 
