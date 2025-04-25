@@ -10,19 +10,24 @@ namespace Education.Application.Services.CategoryServices
             _categoryRepository = categoryRepository;
         }
         private readonly ICategoryRepository _categoryRepository;
-       
-        public async Task Add(Categories Category)
+
+        public async Task<bool> Add(Categories Category)
         {
             await _categoryRepository.AddAsync(Category);
-            await _categoryRepository.SaveChangesAsync();
+           return await _categoryRepository.SaveChangesAsync();
         }
         public async Task<bool> Delete(int id)
         {
             try
             {
-               await _categoryRepository.Delete(id);
-                await _categoryRepository.SaveChangesAsync();
-                return true;
+                var res = await _categoryRepository.Delete(id);
+                if (res) { 
+             var result = await _categoryRepository.SaveChangesAsync();
+                     if(result)
+                        return true;
+                }
+                return false;
+               
             }
             catch
             {
@@ -30,14 +35,14 @@ namespace Education.Application.Services.CategoryServices
             }
 
         }
-        
-        public async Task<Categories> GetCategoryById(int id)
+
+        public async Task<Categories?> GetCategoryById(int id)
         {
-            var category = await _categoryRepository.GetByIdAsync(id);
-            if (category == null)
-            {
-                throw new KeyNotFoundException($"Category with ID {id} not found.");
-            }
+            var category = await _categoryRepository.GetNotDeletedCategoryById(id);
+            //if (category == null)
+            //{
+            //    throw new KeyNotFoundException($"Category with ID {id} not found.");
+            //}
             return category;
         }
         public  Task<IEnumerable<Categories>> GetCategories()
@@ -51,14 +56,42 @@ namespace Education.Application.Services.CategoryServices
             try
             {
                 _categoryRepository.Update(Category);
-                await _categoryRepository.SaveChangesAsync();
+              var res =  await _categoryRepository.SaveChangesAsync();
+                if(res)
                 return true;
+                return false;
             }
             catch
             {
                 return false;
             }
             
+        }
+
+        public async Task<bool> Update(int id,Categories Category)
+        {
+            try
+            {
+               var category = await _categoryRepository.GetNotDeletedCategoryById(id);
+                if (category != null)
+                {
+                    category.LastUpdateOn = Category.LastUpdateOn;
+                    category.Name = Category.Name;
+                }
+                else
+                {
+                    return false;
+                }
+                    var res = await _categoryRepository.SaveChangesAsync();
+                if (res)
+                    return true;
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
+
         }
         public async Task<IEnumerable<Categories>> SearchCategoryByName(string name)
         {

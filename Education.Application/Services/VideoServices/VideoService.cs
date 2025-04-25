@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Http;
 using Education.Domain.Repository;
 using Education.Application.Services.VideoServices.VideoDurationService;
 using Education.Application.DTO_s.VideoDto_s;
+using Education.Application.Base;
+using Education.Application.ResponseModels.CourseRespondDto;
 
 namespace Education.Application.Services.VideoServices
 {
@@ -65,7 +67,12 @@ namespace Education.Application.Services.VideoServices
             if (video != null)
             {
                 await _videoRepository.AddAsync(video);
-                await _videoRepository.SaveChangesAsync();
+               var result =  await _videoRepository.SaveChangesAsync();
+
+                if (!result)
+                {
+                    throw new Exception("video was not saved in the database");
+                }
             }
            
             return video;

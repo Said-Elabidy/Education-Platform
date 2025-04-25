@@ -64,11 +64,11 @@ namespace EducationPlatform.Controllers
          /* I couldn't Test this becuase swagger makes the properties of pdatevideoDto Required
           but it should work correctly in angular */
         [HttpPut("{Id}")]
-        [Authorize(Roles = MyRoles.Admin)]
+        //[Authorize(Roles = MyRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult> UpdateVideo(int Id, [FromForm] UpdateVideoDto updateVideoDto)
+        public async Task<ActionResult> UpdateVideo([FromRoute] int Id , [FromForm] UpdateVideoDto updateVideoDto)
         {
 
             try

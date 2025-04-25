@@ -9,7 +9,7 @@ namespace Education.Application.Services.QuizServices
     {
         private readonly IQuizRepository _quizRepository = quizRepository;
 
-        public async Task<Quiz> Add(AddQuizDto addQuizDto)
+        public async Task<Quiz?> Add(AddQuizDto addQuizDto)
         {
             Quiz quiz = new Quiz
             {
@@ -20,8 +20,11 @@ namespace Education.Application.Services.QuizServices
             };
 
             await _quizRepository.AddAsync(quiz);
-            await _quizRepository.SaveChangesAsync();
-            return quiz; // Return the created quiz with ID
+          var res =   await _quizRepository.SaveChangesAsync();
+            if(res)
+                return quiz; // Return the created quiz with ID
+
+            return null;
         }
 
         public async Task<bool> Delete(int id)
@@ -65,11 +68,33 @@ namespace Education.Application.Services.QuizServices
             return quiz;
         }
 
-        public async Task<Quiz?> GetQuizWithQuestions(int Id)
+        public async Task<GetQuizWithIcloudQuestions?> GetQuizWithQuestions(int Id)
         {
             Quiz? quiz = await _quizRepository.GetQuizIncludeQuestionsAsync(Id);
 
-            return quiz;
+            if (quiz == null) return null;
+
+            return new GetQuizWithIcloudQuestions
+            {
+                NumOfQuestion = quiz.Questions!.Count(),
+                PassingScore = quiz.PassingScore,
+                SectionId = quiz.SectionId,
+                Id = quiz.Id,
+                Title = quiz.Title,
+                Questions = [.. quiz.Questions!.Select(q => new QuestionsDTO
+                {
+                    CorrectAnswer = q.CorrectAnswer,
+                    Header = q.Header,
+                    Id = q.Id ,
+                    Order = q.Order,
+                    QuizId = q.QuizId
+
+                })],
+                
+            };
+
+
+
         }
 
         public async Task<IEnumerable<Quiz>> GetQuizzes()

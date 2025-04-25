@@ -24,9 +24,9 @@ namespace EducationPlatform.Controllers
         public async Task<ActionResult<IEnumerable<Categories>>> GetAllCategories()
         {
             var categories = await _categoryServices.GetCategories();
-            if (categories == null)
+            if (categories == null || !categories.Any())
             {
-                return NotFound();
+                return NotFound("There are no categories yet");
             }
             return Ok(categories);
         }
@@ -44,16 +44,17 @@ namespace EducationPlatform.Controllers
                 Name = categoryDto.Name,
                 CreateOn = DateTime.Now,
                 IsDeleted = false,
-
-
-
             };
 
 
             try
             {
-                await _categoryServices.Add(category);
-                return Created();
+               var res = await _categoryServices.Add(category);
+                if (!res)
+                {
+                    return BadRequest("Failed to create category");
+                }
+                return StatusCode(201,category);
             }
             catch (Exception ex)
             {
@@ -67,7 +68,7 @@ namespace EducationPlatform.Controllers
             var category = await _categoryServices.GetCategoryById(Id);
             if (category == null)
             {
-                return NotFound();
+                return NotFound($"Category with id {Id} was not found ");
             }
             return Ok(category);
         }
@@ -80,13 +81,17 @@ namespace EducationPlatform.Controllers
             var category = await _categoryServices.GetCategoryById(id);
             if (category == null)
             {
-                return NotFound();
+                return NotFound($"Category with id {id} was not found ");
             }
 
             try
             {
-                await _categoryServices.Delete(id);
-                return NoContent();
+              var res = await _categoryServices.Delete(id);
+                if (!res)
+                {
+                    return BadRequest("Failed to delete category");
+                }
+                return Ok("caregory deleted succesfully");
             }
             catch (Exception ex)
             {
@@ -103,7 +108,7 @@ namespace EducationPlatform.Controllers
             var existingCategory = await _categoryServices.GetCategoryById(id);
             if (existingCategory == null)
             {
-                return NotFound();
+                return NotFound($"ther is no category with Id {id}");
             }
 
             existingCategory.Name = categoryDto.Name;
@@ -113,8 +118,12 @@ namespace EducationPlatform.Controllers
             {
                 var categoryEntity = new Categories { Name = existingCategory.Name, LastUpdateOn = existingCategory.LastUpdateOn, CreateOn = existingCategory.CreateOn, CategorieId = existingCategory.CategorieId, IsDeleted = false };
 
-                await _categoryServices.Update(categoryEntity);
-                return NoContent();
+               var res = await _categoryServices.Update(id,categoryEntity);
+                if (!res)
+                {
+                    return BadRequest("Failed to update category");
+                }
+                return Ok("category updated succesfully");
             }
             catch (Exception ex)
             {
