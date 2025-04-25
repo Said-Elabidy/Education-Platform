@@ -22,6 +22,7 @@ namespace Education.Application.Services.SectionServices
                 //Videos = sectionDto.Videos,
                 CourseId = sectionDto.CourseId,
                 //Quiz = sectionDto.Quiz,
+                
                 IsPassSection=sectionDto.IsPassSection
             };
             await _sectionRepo.AddAsync(section);
@@ -52,6 +53,8 @@ namespace Education.Application.Services.SectionServices
                     SectionId = section.SectionId,
                     SectionName = section.SectionName,
                     IsPassSection = section.IsPassSection,
+                    quizId = section.quizId,
+                    VideosNum = section.VideosNum,
                     //CourseId = section.CourseId,
                     //Courses = section.Courses,
                     //Videos = section.Videos,
@@ -70,9 +73,12 @@ namespace Education.Application.Services.SectionServices
             {
                 SectionId = s.SectionId,
                 SectionName = s.SectionName,
+                IsPassSection = s.IsPassSection,
+                quizId = s.Quiz.Id,
+                VideosNum = s.Videos.Count()
                 //CourseId = s.CourseId,
                 //Courses = s.Courses,
-                IsPassSection = s.IsPassSection,
+
                 //Quiz = new GetQuizeDTO { Id = s.Quiz.Id, NumOfQuestion = s.Quiz.NumOfQuestion, PassingScore = s.Quiz.PassingScore, SectionId = s.Quiz.SectionId, Title = s.Quiz.Title },
                 //Videos = s.Videos
             }).ToList();
@@ -90,6 +96,7 @@ namespace Education.Application.Services.SectionServices
                 //Courses = s.Courses,
                 VideosNum=s.VideosNum,
                 IsPassSection = s.IsPassSection,
+                quizId = s.quizId,
                 //Quiz = new GetQuizeDTO { Id = s.Quiz.Id, NumOfQuestion = s.Quiz.NumOfQuestion, PassingScore = s.Quiz.PassingScore, SectionId = s.Quiz.SectionId, Title = s.Quiz.Title, Questions=s.Quiz.Questions },
 
                 //Videos = s.Videos

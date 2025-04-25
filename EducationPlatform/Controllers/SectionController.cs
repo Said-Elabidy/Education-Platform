@@ -86,7 +86,7 @@ namespace EducationPlatform.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateSection([FromForm]CreateSectionDto sectionDto)
+        public async Task<IActionResult> CreateSection([FromBody]CreateSectionDto sectionDto)
         {
             try
             {
@@ -101,11 +101,11 @@ namespace EducationPlatform.Controllers
         [HttpPut("{Id:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> UpdateSection(int Id,[FromForm] UpdateSectionDto updateSection)
+        public async Task<IActionResult> UpdateSection([FromRoute]int Id,[FromBody] UpdateSectionDto updateSection)
         {
            bool IsUpdated= await _sectionServices.Update(Id, updateSection);
             if (IsUpdated)
-                return NoContent();
+                return Ok("section was updated succesfully");
             return NotFound(new { Massage = $"No Sections found for This Id = {Id}" });
         }
     }

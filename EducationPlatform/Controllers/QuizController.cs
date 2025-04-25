@@ -39,11 +39,14 @@ namespace EducationPlatform.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<Quiz>> AddQuiz([FromForm]AddQuizDto addQuizDto)
+        public async Task<ActionResult<Quiz>> AddQuiz([FromBody]AddQuizDto addQuizDto)
         {
             try
             {
                 var newQuiz = await _quizService.Add(addQuizDto);
+
+                if (newQuiz is null)
+                    return BadRequest("Quiz Was Not Saved Correctly");
 
                 return CreatedAtAction(nameof(GetQuizById), new { id = newQuiz.Id }, newQuiz);
             }
@@ -66,7 +69,7 @@ namespace EducationPlatform.Controllers
         [HttpGet("{id}/questions")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Quiz>> GetQuizWithQuestions(int id)
+        public async Task<ActionResult<GetQuizWithIcloudQuestions?>> GetQuizWithQuestions(int id)
         {
             var quiz = await _quizService.GetQuizWithQuestions(id);
 
@@ -86,11 +89,11 @@ namespace EducationPlatform.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> UpdateQuiz(int id,[FromForm] UpdateQuizDto updateQuizDto)
+        public async Task<IActionResult> UpdateQuiz([FromRoute]int id,[FromBody] UpdateQuizDto updateQuizDto)
         {
             var isUpdated = await _quizService.Update(id, updateQuizDto);
 
-            return isUpdated ? NoContent() : NotFound($"Quiz with ID : {id} not found");
+            return isUpdated ? Ok("Quiz updated succesfully") : NotFound($"Quiz with ID : {id} not found");
         }
     }
 }

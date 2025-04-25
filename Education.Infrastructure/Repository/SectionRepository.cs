@@ -39,6 +39,7 @@ namespace Education.Infrastructure.Repository
                     //Quiz = new GetQuizeDTO { Id = s.Quiz.Id, NumOfQuestion = s.Quiz.NumOfQuestion, PassingScore = s.Quiz.PassingScore, SectionId = s.Quiz.SectionId, Title = s.Quiz.Title },
                     SectionName = s.SectionName,
                     VideosNum = s.Videos.Count,
+                    quizId = s.Quiz.Id
                     //Videos = s.Videos.Select(v => new GetVideosBySectionIdDto { Description = v.Description, IsFree = v.IsFree, SectionId = v.SectionId, Title = v.Title, VideoFileUrl = v.VideoFileUrl, VideoDuration = v.VideoDuration, VideoId = v.VideoId, VideoImageUrl = v.VideoImageUrl }).ToList()
                 };
             return null;
@@ -46,12 +47,12 @@ namespace Education.Infrastructure.Repository
 
         public async Task<IEnumerable<SectionDto>> getAllByCourseId(int courseId)
         {
-            return await _dbSet.Include(s=>s.Videos).Where(s => s.CourseId == courseId).
+            return await _dbSet.Include(s => s.Quiz).Include(s=>s.Videos).Where(s => s.CourseId == courseId).
                 Select(s => new SectionDto() {
                     SectionId = s.SectionId,
                     IsPassSection = s.IsPassSection, 
                     SectionName = s.SectionName,
-             
+             quizId = s.Quiz.Id,
                     VideosNum = s.Videos.Count }).ToListAsync();
         }
 

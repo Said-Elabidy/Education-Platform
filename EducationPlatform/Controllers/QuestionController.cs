@@ -10,7 +10,7 @@ namespace EducationPlatform.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class QuestionController(IQuestionService questionService) : ControllerBase
     {
         private readonly IQuestionService _questionService = questionService;
@@ -49,17 +49,17 @@ namespace EducationPlatform.Controllers
         // Add new Question
 
         [HttpPost]
-        [Authorize(Roles = MyRoles.Admin)]
+        //[Authorize(Roles = MyRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> AddQuestion([FromForm] CreateQuestionDto questionDto)
+        public async Task<ActionResult> AddQuestion([FromBody] CreateQuestionDto questionDto)
         {
            if(questionDto == null) { return BadRequest(); } 
 
             try
             {
                 await _questionService.Add(questionDto);
-                return Created();
+                return StatusCode(201, "Question created succesfully");
             }
             catch
             {
@@ -83,12 +83,12 @@ namespace EducationPlatform.Controllers
         // Update Question
 
         [HttpPut("{Id}")]
-        [Authorize(Roles = MyRoles.Admin)]
-        public async Task<ActionResult> UpdateQuestion([FromRoute] int Id,[FromForm] UpdateQuestionDto updateQuestionDto)
+      //  [Authorize(Roles = MyRoles.Admin)]
+        public async Task<ActionResult> UpdateQuestion([FromRoute] int Id,[FromBody] UpdateQuestionDto updateQuestionDto)
         {
             var isUpdated =await _questionService.Update(Id, updateQuestionDto);
 
-            return isUpdated ? NoContent() : NotFound();
+            return isUpdated ? Ok("Question Updated Succesfully") : NotFound($"Question With Id {Id} was not found");
         }
 
     }

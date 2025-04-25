@@ -13,8 +13,8 @@ namespace Education.Application.Services.QuizServices
         Task<bool> Update(int Id, UpdateQuizDto updateQuizDto);
         Task<bool> Delete(int id);
 
-        Task<Quiz>Add(AddQuizDto quizDto);
+        Task<Quiz?>Add(AddQuizDto quizDto);
 
-        Task<Quiz?> GetQuizWithQuestions(int Id);
+        Task<GetQuizWithIcloudQuestions?> GetQuizWithQuestions(int Id);
     }
 }
