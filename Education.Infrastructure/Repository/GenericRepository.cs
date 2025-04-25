@@ -56,10 +56,6 @@ namespace Education.Infrastructure.Repository
         }
 
 
-		public virtual async Task<bool> SaveChangesAsync()
-		{
-			return await _context.SaveChangesAsync() > 0;
-		}
           
           public virtual async Task<bool> Delete(int Id)
 
